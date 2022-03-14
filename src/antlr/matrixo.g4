@@ -32,38 +32,38 @@ block: L_BRAK statement* R_BRAK;
 
 return_type: type | VOID;
 
-assignment: identifier ASSIGN_OP expression;
+assignment: IDENTIFIER ASSIGN_OP expression;
 
 // DECLARATIONS
 
 declaration: function_dec | variable_dec;
 
-function_dec: FUNCTION identifier L_PAR parameter* R_PAR RETURNS return_type block;
+function_dec: FUNCTION IDENTIFIER L_PAR parameter* R_PAR RETURNS return_type block;
 
-parameter: type identifier (COMMA)?;
+parameter: type IDENTIFIER (COMMA)?;
 
-variable_dec: type identifier (variable_init)?;
+variable_dec: type IDENTIFIER (variable_init)?;
 
 variable_init: ASSIGN_OP expression;
 
 type: scalar_type | multidim_type;
 
-scalar_type: INT | LONGINT | BOOL | DOUBLE;
+scalar_type: INT_TYPE | LONGINT | BOOL | DOUBLE_TYPE;
 
 multidim_type: scalar_type (MATRIX | VECTOR) bracket_expr*;
 
 // EXPRESSIONS
 
-expression: integer | double | expression INFIX_OP expression | identifier  | PREFIX_OP expression |
+expression: INTEGER | DOUBLE | expression INFIX_OP expression | IDENTIFIER  | PREFIX_OP expression |
             | bracket_expr| matrix_init | paranthesis_expr | function_call | get_call;
 
-get_call: GET identifier INBUILT_OPERATION;
+get_call: GET IDENTIFIER INBUILT_OPERATION;
 
 matrix_init: L_PAR row* ;
 
-row: (integer | double)* (COMMA | R_PAR);
+row: (INTEGER | DOUBLE)* (COMMA | R_PAR);
 
-function_call: identifier L_PAR (expression COMMA)? R_PAR;
+function_call: IDENTIFIER L_PAR (expression COMMA)? R_PAR;
 
 
 paranthesis_expr: L_PAR expression R_PAR;
@@ -72,11 +72,11 @@ bracket_expr: L_SQBRAK expression R_SQBRAK (L_SQBRAK expression R_SQBRAK)?;
 
 // IDENTIFIER, NUMBER
 
-identifier: CHARACTER (CHARACTER | NONZERO_DIGIT | '0')*;
+//IDENTIFIER: CHARACTER (CHARACTER | NONZERO_DIGIT | '0')*;
 
-double: integer DOT (NONZERO_DIGIT | '0')+;
-
-integer: NONZERO_DIGIT (NONZERO_DIGIT | '0')*;
+//double: integer DOT (NONZERO_DIGIT | '0')+;
+//
+//integer: NONZERO_DIGIT (NONZERO_DIGIT | '0')*;
 
 
 // tokens
@@ -97,10 +97,10 @@ COMMENT: '//' ~[\r\n]* -> skip;
 VOID: 'void';
 FUNCTION: 'function' | 'fun';
 RETURNS: 'returns' | 'ret';
-INT: 'int';
+INT_TYPE: 'int';
 LONGINT: 'longint';
 BOOL: 'bool';
-DOUBLE: 'double';
+DOUBLE_TYPE: 'double';
 MATRIX: 'matrix';
 VECTOR: 'vector';
 BREAK: 'break';
@@ -109,20 +109,15 @@ INFIX_OP:  '+' | '-' | '&&' | 'and' | '||' | 'or'
          '%' | '==' | '/' | '*';
 ASSIGN_OP: '+=' | '-=' | '*=' | '/=' | '=';
 COMMA: ',';
-//PLUS: '+';
-//MINUS: '-';
-//AND: '&&' | 'and';
-//OR: '||' | 'or';
-//MOD: '%';
-//EQUAL: '==';
-//DIV: '/';
-//MULT: '*';
 DOT: '.';
-CHARACTER: [a-zA-Z] | '_';
-NONZERO_DIGIT: [1-9];
+//CHARACTER: [a-zA-Z] | '_';
+//NONZERO_DIGIT: [1-9];
+INTEGER: [1-9][0-9]*;
+DOUBLE:[1-9][0-9]*'.'[0-9]*;
 GET: 'get';
 IMPORT: 'import' | 'imp';
 FILE_TYPE: 'odt' | 'xlsx' | 'csv';
 BACKSLASH: '\\';
 SPACE: [ \t\n\r] -> skip;
 FROM: 'from';
+IDENTIFIER: [a-zA-Z_][0-9a-zA-Z]*;

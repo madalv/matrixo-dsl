@@ -4,5 +4,4 @@ int matrix mx1 = (
 323 4
 );
 double d += ++4.7 + --56.12 + 15;
-double d;
-d = get mx1 determinant;
+int d = get mx1 determinant;
