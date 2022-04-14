@@ -1,5 +1,7 @@
 // Generated from C:/Users/Vlada/Downloads/pbl-sem-4/matrixoLang/src\matrixo.g4 by ANTLR 4.9.2
 
+package matrixoLang;
+
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 import java.io.InputStream;

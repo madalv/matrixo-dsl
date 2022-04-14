@@ -1,6 +1,6 @@
 // Generated from C:/Users/Vlada/Downloads/pbl-sem-4/matrixoLang/src\matrixo.g4 by ANTLR 4.9.2
 
-
+package matrixoLang;
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -139,7 +139,7 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMultidim_type(matrixoParser.Multidim_typeContext ctx);
 	/**
-	 * Visit a parse tree produced by .
+	 * Visit a parse tree produced by {@link matrixoParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */

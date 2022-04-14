@@ -1,15 +1,12 @@
 // Generated from C:/Users/Vlada/Downloads/pbl-sem-4/matrixoLang/src\matrixo.g4 by ANTLR 4.9.2
 
-
+package matrixoLang;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
 import java.util.List;
-import java.util.Iterator;
-import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class matrixoParser extends Parser {
@@ -101,7 +98,7 @@ public class matrixoParser extends Parser {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "matrixo.g4"; }
+	public String getGrammarFileName() { return "matrixoLang/matrixo.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
