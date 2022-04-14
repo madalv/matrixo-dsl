@@ -33,12 +33,13 @@ public class matrixoInterpreter {
         matrixoLexer lexer = new matrixoLexer(program);
         TokenStream tokens = new CommonTokenStream(lexer);
         matrixoParser parser = new matrixoParser(tokens);
+        //parser.setErrorListener();
         parser.setErrorHandler(new BailErrorStrategy());
 
         try {
             ParseTree AST = parser.program();
             memory = new Memory();
-            matrixoBaseVisitor<ParseTree> evaluator = new matrixoBaseVisitor<>(memory, stdin, stdoutPrint, stderrorPrint);
+            matrixoBaseVisitor evaluator = new matrixoBaseVisitor(memory, stdin, stdoutPrint, stderrorPrint);
             evaluator.visit(AST);
         } catch (Exception e) { // TODO: implement error handling
             stderrorPrint.println(e.getMessage());
