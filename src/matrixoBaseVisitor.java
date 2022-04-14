@@ -1,9 +1,9 @@
-// Generated from C:/Users/Vlada/Downloads/pbl-sem-4/antlr/src/antlr\matrixo.g4 by ANTLR 4.9.2
-package antlr;
-
-package antlr;
+// Generated from C:/Users/Vlada/Downloads/pbl-sem-4/matrixoLang/src\matrixo.g4 by ANTLR 4.9.2
 
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
+
+import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
  * This class provides an empty implementation of {@link matrixoVisitor},
@@ -14,6 +14,9 @@ import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
  * operations with no return type.
  */
 public class matrixoBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements matrixoVisitor<T> {
+	public matrixoBaseVisitor(Memory memory, InputStream stdin, PrintStream stdoutPrint, PrintStream stderrorPrint) {
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -202,7 +205,7 @@ public class matrixoBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPrefix_expr(matrixoParser.Prefix_exprContext ctx) { return visitChildren(ctx); }
+	@Override public T visitImport_call(matrixoParser.Import_callContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -223,19 +226,5 @@ public class matrixoBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitIdentifier(matrixoParser.IdentifierContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitDouble(matrixoParser.DoubleContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public T visitInteger(matrixoParser.IntegerContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFilename(matrixoParser.FilenameContext ctx) { return visitChildren(ctx); }
 }

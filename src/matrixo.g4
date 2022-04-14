@@ -2,7 +2,7 @@
 grammar matrixo;
 
 @header {
-package antlr;
+package matrixoLang;
 }
 
 // production rules
@@ -55,7 +55,7 @@ multidim_type: scalar_type (MATRIX | VECTOR) bracket_expr*;
 // EXPRESSIONS
 
 expression: INTEGER | DOUBLE | expression INFIX_OP expression | IDENTIFIER  | PREFIX_OP expression |
-            | bracket_expr| matrix_init | paranthesis_expr | function_call | get_call;
+            | bracket_expr| matrix_init | paranthesis_expr | function_call | get_call | import_call;
 
 get_call: GET IDENTIFIER INBUILT_OPERATION;
 
@@ -63,24 +63,19 @@ matrix_init: L_PAR row* ;
 
 row: (INTEGER | DOUBLE)* (COMMA | R_PAR);
 
-function_call: IDENTIFIER L_PAR (expression COMMA)? R_PAR;
+function_call: (IDENTIFIER | INBUILT_FUNCTION) L_PAR (expression COMMA?)? R_PAR;
 
+import_call: IMPORT (MATRIX | VECTOR) FROM filename;
 
 paranthesis_expr: L_PAR expression R_PAR;
 
 bracket_expr: L_SQBRAK expression R_SQBRAK (L_SQBRAK expression R_SQBRAK)?;
 
-// IDENTIFIER, NUMBER
-
-//IDENTIFIER: CHARACTER (CHARACTER | NONZERO_DIGIT | '0')*;
-
-//double: integer DOT (NONZERO_DIGIT | '0')+;
-//
-//integer: NONZERO_DIGIT (NONZERO_DIGIT | '0')*;
-
+filename: (PATH)? NAME;
 
 // tokens
 INBUILT_OPERATION: 'determinant' | 'eigenvalue';
+INBUILT_FUNCTION: 'print';
 RETURN: 'return';
 FOR: 'for';
 L_PAR: '(';
@@ -110,14 +105,14 @@ INFIX_OP:  '+' | '-' | '&&' | 'and' | '||' | 'or'
 ASSIGN_OP: '+=' | '-=' | '*=' | '/=' | '=';
 COMMA: ',';
 DOT: '.';
-//CHARACTER: [a-zA-Z] | '_';
-//NONZERO_DIGIT: [1-9];
 INTEGER: [1-9][0-9]*;
 DOUBLE:[1-9][0-9]*'.'[0-9]*;
 GET: 'get';
 IMPORT: 'import' | 'imp';
 FILE_TYPE: 'odt' | 'xlsx' | 'csv';
-BACKSLASH: '\\';
 SPACE: [ \t\n\r] -> skip;
 FROM: 'from';
-IDENTIFIER: [a-zA-Z_][0-9a-zA-Z]*;
+IDENTIFIER: [a-zA-Z_][0-9a-zA-Z_]*;
+NAME: [a-zA-Z0-9_]+ '.' ('csv' | 'xlsx');
+PATH: ([a-zA-Z0-9_]':\\')([a-zA-Z0-9_]+ '\\')* | '\\' ;
+

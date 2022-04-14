@@ -1,7 +1,6 @@
-// Generated from C:/Users/Vlada/Downloads/pbl-sem-4/antlr/src/antlr\matrixo.g4 by ANTLR 4.9.2
-package antlr;
+// Generated from C:/Users/Vlada/Downloads/pbl-sem-4/matrixoLang/src\matrixo.g4 by ANTLR 4.9.2
 
-package antlr;
+
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -140,7 +139,7 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitMultidim_type(matrixoParser.Multidim_typeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link matrixoParser#expression}.
+	 * Visit a parse tree produced by .
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
@@ -170,11 +169,11 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitFunction_call(matrixoParser.Function_callContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link matrixoParser#prefix_expr}.
+	 * Visit a parse tree produced by {@link matrixoParser#import_call}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPrefix_expr(matrixoParser.Prefix_exprContext ctx);
+	T visitImport_call(matrixoParser.Import_callContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link matrixoParser#paranthesis_expr}.
 	 * @param ctx the parse tree
@@ -188,21 +187,9 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBracket_expr(matrixoParser.Bracket_exprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link matrixoParser#identifier}.
+	 * Visit a parse tree produced by {@link matrixoParser#filename}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIdentifier(matrixoParser.IdentifierContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link matrixoParser#double}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDouble(matrixoParser.DoubleContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link matrixoParser#integer}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitInteger(matrixoParser.IntegerContext ctx);
+	T visitFilename(matrixoParser.FilenameContext ctx);
 }
