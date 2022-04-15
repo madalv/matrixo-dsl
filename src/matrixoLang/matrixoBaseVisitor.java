@@ -3,7 +3,6 @@
 package matrixoLang;
 
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
-
 import javax.management.ValueExp;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -162,22 +161,16 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
 	@Override public Value visitVariable_dec(matrixoParser.Variable_decContext ctx) {
-		//Value<Matrix<Boolean>> n = new Value<>();
+		Value v = visitScalar_type(ctx.type().multidim_type().scalar_type());
+		System.out.println(v.getString());
 		return visitChildren(ctx);
 	}
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public Value visitVariable_init(matrixoParser.Variable_initContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
+
+	@Override public Value visitVariable_init(matrixoParser.Variable_initContext ctx) {
+		return visitExpression(ctx.expression());
+	}
+
+
 	@Override public Value visitType(matrixoParser.TypeContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -185,27 +178,33 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public Value visitScalar_type(matrixoParser.Scalar_typeContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public Value visitMultidim_type(matrixoParser.Multidim_typeContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
-	@Override public Value visitExpression(matrixoParser.ExpressionContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
+	@Override public Value visitScalar_type(matrixoParser.Scalar_typeContext ctx) {
+		if (ctx.INT_TYPE() != null) return new Value(ctx.INT_TYPE().getText());
+		else if (ctx.LONGINT() != null) return new Value(ctx.LONGINT().getText());
+		else if (ctx.BOOL() != null) return new Value(ctx.BOOL().getText());
+		else if (ctx.DOUBLE_TYPE() != null) return new Value(ctx.DOUBLE_TYPE().getText());
+		else return visitChildren(ctx);
+	}
+
+	@Override public Value visitMultidim_type(matrixoParser.Multidim_typeContext ctx) {
+		return visitChildren(ctx);
+	}
+
+
+	@Override public Value visitExpression(matrixoParser.ExpressionContext ctx) {
+		if (ctx.getChildCount() == 1) {
+			if (ctx.IDENTIFIER() != null) return new Value(ctx.IDENTIFIER().getText());
+			else if (ctx.INTEGER() != null) return new Value(Integer.parseInt(ctx.INTEGER().getText()));
+			else if (ctx.DOUBLE() != null) return new Value(Double.parseDouble(ctx.DOUBLE().getText()));
+			else if (ctx.matrix_init() != null) return visitMatrix_init(ctx.matrix_init());
+
+			// TODO: add rest of expression derivations
+		}
+		return visitChildren(ctx);
+	}
+
+
+
 	@Override public Value visitGet_call(matrixoParser.Get_callContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -213,16 +212,22 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public Value visitMatrix_init(matrixoParser.Matrix_initContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 * @return
-	 */
-	@Override public Value visitRow(matrixoParser.RowContext ctx) {
+	@Override public Value visitMatrix_init(matrixoParser.Matrix_initContext ctx) {
 
+		if (ctx.getChildCount() == 2) {
+			Vector<Double> v = new Vector<>((ArrayList<Double>) visitRow(ctx.row(0)).getList());
+			return new Value(v);
+		} else {
+			Matrix<Double> m = new Matrix<>();
+			for (int i = 0; i < ctx.getChildCount() - 1; i++) { // get the rows
+				ArrayList<Double> row = (ArrayList<Double>) visitRow(ctx.row(i)).getList();
+				m.add(row);
+			}
+			return new Value(m);
+		}
+	}
+
+	@Override public Value visitRow(matrixoParser.RowContext ctx) {
 		ArrayList<Double> v = new ArrayList<>();
 		for (var node : ctx.children) {
 			String text = node.getText();
@@ -230,8 +235,6 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 			Double d = Double.parseDouble(text);
 			v.add(d);
 		}
-
-		System.out.println(v);
 		return new Value(v);
 	}
 

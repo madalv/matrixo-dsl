@@ -33,7 +33,6 @@ public class matrixoInterpreter {
         matrixoLexer lexer = new matrixoLexer(program);
         TokenStream tokens = new CommonTokenStream(lexer);
         matrixoParser parser = new matrixoParser(tokens);
-        //parser.setErrorListener();
         parser.setErrorHandler(new BailErrorStrategy());
 
         try {

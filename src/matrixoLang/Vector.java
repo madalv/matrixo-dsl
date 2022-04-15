@@ -5,10 +5,15 @@ import java.util.ArrayList;
 public class Vector<T>{
     private ArrayList<T> value;
 
+    public Vector(ArrayList<T>a) {
+        value = a;
+    }
 
     public ArrayList<T> getValue() {
         return value;
     }
+
+
 
     public void setValue(ArrayList<T> value) {
         this.value = value;
@@ -20,8 +25,7 @@ public class Vector<T>{
 
     @Override
     public String toString() {
-        return "Vector{" +
-                "value=" + value.toString() +
-                '}';
+        return value.toString();
+
     }
 }

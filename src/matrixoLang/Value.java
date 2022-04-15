@@ -25,21 +25,52 @@ public class Value {
         value = v;
    }
 
+
     public Value(String id) {
         value = null;
     }
+
 
     public Value(ArrayList<?> v) {
         value = v;
     }
 
-    public Object getValue() {
-        return value;
+    public Object getNull() {
+        return null;
     }
 
-    public ArrayList<?> getVector() {
+    public ArrayList<?> getList() {
         return (ArrayList<?>) value;
     }
 
+    public ArrayList<?> getMatrix() {
+        if (value instanceof ArrayList<?>) {
+            if (((ArrayList<?>) value).size() > 1) return (ArrayList<?>) value;
+        }
+        return null;
+    }
 
+    public ArrayList<?> getVector() {
+        if (value instanceof ArrayList<?>) {
+            if (((ArrayList<?>) value).size() == 1) return (ArrayList<?>) value;
+        }
+        return null;
+    }
+
+    public Integer getInteger() {
+        return (Integer) value;
+    }
+
+    public String getString() {
+        return (String) value;
+    }
+
+    public Double getDouble() {
+        return (Double) value;
+    }
+
+    @Override
+    public String toString() {
+        return value.toString();
+    }
 }
