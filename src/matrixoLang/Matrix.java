@@ -3,26 +3,26 @@ package matrixoLang;
 
 import java.util.ArrayList;
 
-public class Matrix<T>{
-    private ArrayList<ArrayList<T>> value;
+public class Matrix{
+    private ArrayList<ArrayList<Double>> value;
 
     public Matrix() {
         value = new ArrayList<>();
     }
 
-    public Matrix(ArrayList<ArrayList<T>> a) {
+    public Matrix(ArrayList<ArrayList<Double>> a) {
         value = a;
     }
 
-    public void add(ArrayList<T> a) {
+    public void add(ArrayList<Double> a) {
         value.add(a);
     }
 
-    public ArrayList<ArrayList<T>> getValue() {
+    public ArrayList<ArrayList<Double>> getValue() {
         return value;
     }
 
-    public void setValue(ArrayList<ArrayList<T>> value) {
+    public void setValue(ArrayList<ArrayList<Double>> value) {
         this.value = value;
     }
 

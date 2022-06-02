@@ -38,8 +38,8 @@ public class matrixoInterpreter {
         try {
             ParseTree AST = parser.program();
             memory = new Memory();
-            matrixoBaseVisitor evaluator = new matrixoBaseVisitor(memory, stdin, stdoutPrint, stderrorPrint);
-            evaluator.visit(AST);
+            //matrixoBaseVisitor evaluator = new matrixoBaseVisitor(memory, stdin, stdoutPrint, stderrorPrint);
+            //evaluator.visit(AST);
         } catch (Exception e) { // TODO: implement error handling
             stderrorPrint.println(e.getMessage());
         }

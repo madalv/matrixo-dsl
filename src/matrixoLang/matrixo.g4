@@ -12,9 +12,9 @@ program: statement* EOF;
 
 statement: nosemicolon_s | (semicolon_s SEMICOL);
 
-nosemicolon_s: ctrlflow_s | block | COMMENT;
+nosemicolon_s: ctrlflow_s | block | COMMENT | function_dec;
 
-semicolon_s: declaration | return_s | assignment | expression | BREAK;
+semicolon_s: variable_dec | return_s | assignment | expression | BREAK;
 
 return_s: RETURN expression;
 
@@ -36,8 +36,6 @@ assignment: IDENTIFIER ASSIGN_OP expression;
 
 // DECLARATIONS
 
-declaration: function_dec | variable_dec;
-
 function_dec: FUNCTION IDENTIFIER L_PAR parameter* R_PAR RETURNS return_type block;
 
 parameter: type IDENTIFIER (COMMA)?;
@@ -46,22 +44,22 @@ variable_dec: type IDENTIFIER (variable_init)?;
 
 variable_init: ASSIGN_OP expression;
 
-type: scalar_type | multidim_type;
-
-scalar_type: INT_TYPE | LONGINT | BOOL | DOUBLE_TYPE;
-
-multidim_type: scalar_type (MATRIX | VECTOR) bracket_expr*;
+type: DOUBLE_TYPE | BOOL_TYPE | INT_TYPE | MATRIX | VECTOR;
 
 // EXPRESSIONS
 
-expression: INTEGER | DOUBLE | expression INFIX_OP expression | IDENTIFIER  | PREFIX_OP expression |
-            | bracket_expr| matrix_init | paranthesis_expr | function_call | get_call | import_call;
+expression:  atom | PREFIX_OP atom | SQRT atom | expression POWER expression |
+            expression FIRST_ORDER_OP expression |
+            expression SECOND_ORDER_OP expression | expression BOOL_OP expression |
+             matrix_init | function_call | get_call | import_call;
+
+atom: TRUE | FALSE | NUMBER | IDENTIFIER | paranthesis_expr | function_call;
 
 get_call: GET IDENTIFIER INBUILT_OPERATION;
 
 matrix_init: L_PAR row* ;
 
-row: (INTEGER | DOUBLE)* (COMMA | R_PAR);
+row: NUMBER* (COMMA | R_PAR);
 
 function_call: (IDENTIFIER | INBUILT_FUNCTION) L_PAR (expression COMMA?)? R_PAR;
 
@@ -69,7 +67,7 @@ import_call: IMPORT (MATRIX | VECTOR) FROM filename;
 
 paranthesis_expr: L_PAR expression R_PAR;
 
-bracket_expr: L_SQBRAK expression R_SQBRAK (L_SQBRAK expression R_SQBRAK)?;
+//bool_expr: TRUE | FALSE | expression BOOL_OP expression;
 
 filename: (PATH)? NAME;
 
@@ -92,21 +90,24 @@ COMMENT: '//' ~[\r\n]* -> skip;
 VOID: 'void';
 FUNCTION: 'function' | 'fun';
 RETURNS: 'returns' | 'ret';
+BOOL_TYPE: 'bool';
 INT_TYPE: 'int';
-LONGINT: 'longint';
-BOOL: 'bool';
+TRUE: 'true';
+FALSE: 'false';
 DOUBLE_TYPE: 'double';
 MATRIX: 'matrix';
 VECTOR: 'vector';
 BREAK: 'break';
+POWER: '**';
+SQRT: '%%';
 PREFIX_OP: '++' | '--' | '!';
-INFIX_OP:  '+' | '-' | '&&' | 'and' | '||' | 'or'
-         '%' | '==' | '/' | '*';
+SECOND_ORDER_OP:  '+' | '-';
+FIRST_ORDER_OP: '%' |  '/' | '*';
+BOOL_OP: '&&' | 'and' | '||' | 'or' | '==' | '<' | '>' | '<=' | '>=' | '!=';
 ASSIGN_OP: '+=' | '-=' | '*=' | '/=' | '=';
 COMMA: ',';
 DOT: '.';
-INTEGER: [1-9][0-9]*;
-DOUBLE:[1-9][0-9]*'.'[0-9]*;
+NUMBER: [1-9][0-9]*'.'[0-9]* | [1-9][0-9]* | '0';
 GET: 'get';
 IMPORT: 'import' | 'imp';
 FILE_TYPE: 'odt' | 'xlsx' | 'csv';

@@ -1,6 +1,6 @@
-// Generated from C:/Users/Vlada/Downloads/pbl-sem-4/matrixoLang/src\matrixo.g4 by ANTLR 4.9.2
-
+// Generated from C:/Users/Vlada/Downloads/pbl-sem-4/matrixoLang/src/matrixoLang\matrixo.g4 by ANTLR 4.9.2
 package matrixoLang;
+
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -91,12 +91,6 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAssignment(matrixoParser.AssignmentContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link matrixoParser#declaration}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitDeclaration(matrixoParser.DeclarationContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link matrixoParser#function_dec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -127,23 +121,17 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitType(matrixoParser.TypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link matrixoParser#scalar_type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitScalar_type(matrixoParser.Scalar_typeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link matrixoParser#multidim_type}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitMultidim_type(matrixoParser.Multidim_typeContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link matrixoParser#expression}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitExpression(matrixoParser.ExpressionContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link matrixoParser#atom}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAtom(matrixoParser.AtomContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link matrixoParser#get_call}.
 	 * @param ctx the parse tree
@@ -180,12 +168,6 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitParanthesis_expr(matrixoParser.Paranthesis_exprContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link matrixoParser#bracket_expr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitBracket_expr(matrixoParser.Bracket_exprContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link matrixoParser#filename}.
 	 * @param ctx the parse tree
