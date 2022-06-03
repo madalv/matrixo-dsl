@@ -27,6 +27,6 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor<Value>{
             // do stuff
             return null;
         }
-        else throw new CallNonDefinedFunctionException(fnName);
+        else throw new CallNonDefinedFunctionException(fnName, ctx.start.getLine());
     }
 }

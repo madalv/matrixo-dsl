@@ -4,13 +4,8 @@ import matrixoLang.Domain.*;
 import matrixoLang.Domain.Vector;
 import matrixoLang.Exceptions.*;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
-
 import org.antlr.v4.runtime.tree.ParseTree;
-
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class matrixoBaseVisitor<V> extends AbstractParseTreeVisitor<Value> implements matrixoVisitor<Value> {
@@ -82,9 +77,9 @@ public class matrixoBaseVisitor<V> extends AbstractParseTreeVisitor<Value> imple
 			// TODO: implement other assignment ops than =
 			if (val == null ||type2.equals(type1) && op.equals("=")) {
 				globalMemory.getVariables().replace(varName, assigned);
-			} else throw new AssignmentMismatchException(type1, type2, varName);
+			} else throw new AssignmentMismatchException(type1, type2, varName, ctx.start.getLine());
 
-		} else throw new AssignToNonExistentVarException(varName);
+		} else throw new AssignToNonExistentVarException(varName, ctx.start.getLine());
 		return null;
 	}
 
@@ -115,7 +110,7 @@ public class matrixoBaseVisitor<V> extends AbstractParseTreeVisitor<Value> imple
 			if (v.getType().equalsIgnoreCase(ctx.type().getText())) {
 				globalMemory.assignLocalVar(ctx.IDENTIFIER().getText(), v);
 			}
-			else throw new AssignmentMismatchException(ctx.type().getText(), v.getType(), ctx.IDENTIFIER().getText());
+			else throw new AssignmentMismatchException(ctx.type().getText(), v.getType(), ctx.IDENTIFIER().getText(), ctx.start.getLine());
 		} else globalMemory.assignLocalVar(ctx.IDENTIFIER().getText(), null);
 
 		return null;
@@ -158,7 +153,7 @@ public class matrixoBaseVisitor<V> extends AbstractParseTreeVisitor<Value> imple
 	@Override public Value visitAtom(matrixoParser.AtomContext ctx) {
 		if (ctx.IDENTIFIER() != null) {
 			if (globalMemory.getVariables().containsKey(ctx.IDENTIFIER().getText())) return globalMemory.getLocalVar(ctx.IDENTIFIER().getText());
-			else throw new AttemptToAccessNonDefinedVarException(ctx.IDENTIFIER().getText());
+			else throw new AttemptToAccessNonDefinedVarException(ctx.IDENTIFIER().getText(), ctx.start.getLine());
 		} else if (ctx.TRUE() != null) return new Value(Boolean.TRUE, "bool");
 		else if (ctx.FALSE() != null) return new Value(Boolean.FALSE, "bool");
 		else if (ctx.NUMBER() != null) return new Value(Double.parseDouble(ctx.NUMBER().getText()), "double");
@@ -206,10 +201,10 @@ public class matrixoBaseVisitor<V> extends AbstractParseTreeVisitor<Value> imple
 					for (int i = 0; i < params.size(); i++) {
 						Parameter p = params.get(i);
 						Value v = args.get(i);
-						if (!p.getType().equals(v.getType())) throw new ParameterArgumentTypeMismatchException(ctx.getText(), p, v);
+						if (!p.getType().equals(v.getType())) throw new ParameterArgumentTypeMismatchException(ctx.getText(), p, v, ctx.start.getLine());
 						else localVars.put(params.get(i).getName(), v);
 					}
-				} else throw new ParameterArgumentNumberMismatchException(ctx.getText());
+				} else throw new ParameterArgumentNumberMismatchException(ctx.getText(), ctx.start.getLine());
 			} catch (Exception e) {
 				System.out.println(e.getMessage());
 			}
@@ -224,7 +219,7 @@ public class matrixoBaseVisitor<V> extends AbstractParseTreeVisitor<Value> imple
 			// do stuff
 			return null;
 		}
-		else throw new CallNonDefinedFunctionException(fnName);
+		else throw new CallNonDefinedFunctionException(fnName, ctx.start.getLine());
 	}
 
 	@Override public Value visitArgument_list(matrixoParser.Argument_listContext ctx) {

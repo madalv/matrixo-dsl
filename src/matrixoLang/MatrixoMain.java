@@ -8,10 +8,10 @@ import java.io.IOException;
 public class MatrixoMain {
     public static void main(String[] args) {
         try {
-            CharStream in = CharStreams.fromFileName("C:\\Users\\Vlada\\Downloads\\pbl-sem-4\\matrixoLang\\src\\tests\\test2.mo");
-            matrixoInterpreter interpreter = new matrixoInterpreter(System.in, System.out, System.err);
+            CharStream in = CharStreams.fromFileName(System.getProperty("user.dir") + "\\src\\tests\\test2.mo");
+            matrixoInterpreter interpreter = new matrixoInterpreter();
             interpreter.interpret(in);
-            interpreter.clear();
+
         } catch (IOException e) {
             System.out.println("Error: " + e.getMessage());
             System.exit(-1);

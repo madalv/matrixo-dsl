@@ -1,12 +1,13 @@
 vector v1 = (1 2 3.234);
 
- matrix m1 = import matrix from D:\Code\ad.csv;
+matrix m1 = import matrix from D:\Code\ad.csv;
 
- matrix m2 = import matrix from ad.xlsx;
+matrix m2 = import matrix from ad.xlsx;
 
 print(m2);
 
 fun f1 (double d, matrix m) ret vector {
+// double mo = 3;
 for (i from 0 to 5) {
     if (mo != i) {
         mo = mo + 1;
