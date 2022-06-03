@@ -12,7 +12,11 @@ program: statement* EOF;
 
 statement: nosemicolon_s | (semicolon_s SEMICOL);
 
-nosemicolon_s: ctrlflow_s | block | COMMENT | function_dec;
+nosemicolon_s:
+                ctrlflow_s
+                | block
+                | COMMENT
+                | function_dec;
 
 semicolon_s: variable_dec | return_s | assignment | expression | BREAK;
 
@@ -36,7 +40,9 @@ assignment: IDENTIFIER ASSIGN_OP expression;
 
 // DECLARATIONS
 
-function_dec: FUNCTION IDENTIFIER L_PAR parameter* R_PAR RETURNS return_type block;
+function_dec: FUNCTION IDENTIFIER L_PAR parameter_list R_PAR RETURNS return_type block;
+
+parameter_list: parameter*;
 
 parameter: type IDENTIFIER (COMMA)?;
 
@@ -48,20 +54,29 @@ type: DOUBLE_TYPE | BOOL_TYPE | INT_TYPE | MATRIX | VECTOR;
 
 // EXPRESSIONS
 
-expression:  atom | PREFIX_OP atom | SQRT atom | expression POWER expression |
-            expression FIRST_ORDER_OP expression |
-            expression SECOND_ORDER_OP expression | expression BOOL_OP expression |
-             matrix_init | function_call | get_call | import_call;
+expression:  atom #atomExp
+            | PREFIX_OP atom #prefixExp
+            | SQRT atom #sqrtExp
+            | expression POWER expression #powerExp
+            | expression FIRST_ORDER_OP expression #firstOrdExp
+            | expression SECOND_ORDER_OP expression #secondOrdExp
+            | expression BOOL_OP expression #boolOp
+            | matrix_init #matrixInit
+            | get_call  #getCall
+            | import_call #importCall
+            ;
 
 atom: TRUE | FALSE | NUMBER | IDENTIFIER | paranthesis_expr | function_call;
 
-get_call: GET IDENTIFIER INBUILT_OPERATION;
+get_call: GET IDENTIFIER IDENTIFIER;
 
 matrix_init: L_PAR row* ;
 
 row: NUMBER* (COMMA | R_PAR);
 
-function_call: (IDENTIFIER | INBUILT_FUNCTION) L_PAR (expression COMMA?)? R_PAR;
+function_call: IDENTIFIER L_PAR argument_list R_PAR;
+
+argument_list: (expression COMMA?)*;
 
 import_call: IMPORT (MATRIX | VECTOR) FROM filename;
 
@@ -72,8 +87,7 @@ paranthesis_expr: L_PAR expression R_PAR;
 filename: (PATH)? NAME;
 
 // tokens
-INBUILT_OPERATION: 'determinant' | 'eigenvalue';
-INBUILT_FUNCTION: 'print';
+
 RETURN: 'return';
 FOR: 'for';
 L_PAR: '(';

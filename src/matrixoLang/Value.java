@@ -4,24 +4,41 @@ import java.util.ArrayList;
 
 public class Value {
     private Object value;
+    private String type;
 
-    public Value(Matrix v) {
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Value(Matrix v, String t) {
             value = v.getValue();
+            type = t;
     }
 
-    public Value(Vector v) {
+
+    public Value(Parameter v) {
+        value = v;
+    }
+
+    public Value(Vector v, String t) {
         value = v.getValue();
+        type = t;
     }
 
-    public Value(Integer v) {
+    public Value(Integer v, String t) {
         value = v;
+        type = t;
     }
 
-    public Value(Double v) {
+    public Value(Double v, String t) {
         value = v;
+        type = t;
     }
 
-    public Value(Boolean v) {value = v; }
+    public Value(Boolean v, String t) {
+        value = v;
+        type = t;
+    }
 
     public Value(String id) {
         value = null;
@@ -37,6 +54,10 @@ public class Value {
 
     public ArrayList<Double> getList() {
         return (ArrayList<Double>) value;
+    }
+
+    public ArrayList<Parameter> getParameters() {
+        return (ArrayList<Parameter>) value;
     }
 
     public ArrayList<Double> getMatrix() {
@@ -61,8 +82,17 @@ public class Value {
 
     public Double getDouble() { return (Double) value; }
 
+    public Parameter getParameter() {return (Parameter) value;}
+
+    public String getType() {
+        return type;
+    }
+
     @Override
     public String toString() {
-        return value.toString();
+        return "Value{" +
+                "value=" + value +
+                ", type='" + type + '\'' +
+                '}';
     }
 }
