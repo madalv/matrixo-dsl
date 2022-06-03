@@ -1,53 +1,31 @@
 package matrixoLang;
 
 import matrixoLang.Domain.*;
+import matrixoLang.Domain.Vector;
 import matrixoLang.Exceptions.*;
-import matrixoLang.Exceptions.AssignToNonExistentVarException;
-import matrixoLang.Exceptions.AssignmentMismatchException;
-import matrixoLang.Exceptions.AttemptToAccessNonDefinedVarException;
-import matrixoLang.Exceptions.CallNonDefinedFunctionException;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
-public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implements matrixoVisitor<Value> {
-
-	private final InputStream stdin;
-	private final PrintStream stdout;
-	private PrintStream stderr;
-	private final Memory globalMemory;
-	private PrintStream printStream;
-	private BufferedReader inputStream;
-	private final List<String> inbuiltFunctions = new ArrayList<>(List.of("print"));
+public class matrixoBaseVisitor<V> extends AbstractParseTreeVisitor<Value> implements matrixoVisitor<Value> {
 
 
-	public matrixoBaseVisitor(Memory globalMemory, InputStream stdin, PrintStream stdoutPrint, PrintStream stderrorPrint) {
-		this.stdin = stdin;
-		this.stdout = stdoutPrint;
-		this.stderr = stderrorPrint;
-		this.globalMemory = globalMemory;
+	protected final Memory globalMemory;
+	protected final List<String> inbuiltFunctions = new ArrayList<>(List.of("print"));
+
+	public matrixoBaseVisitor() {
+		this.globalMemory = new Memory();
 	}
+
 
 	@Override public Value visitProgram(matrixoParser.ProgramContext ctx) {
-		init();
 		return visitChildren(ctx);
-	}
-
-	private void init() {
-		printStream = new PrintStream(stdout, true);
-		inputStream = new BufferedReader(new InputStreamReader(stdin));
-	}
-
-	private void cleanup() {
-		printStream.close();
 	}
 
 
@@ -71,7 +49,6 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 
 	//TODO visitIf_s
 	@Override public Value visitIf_s(matrixoParser.If_sContext ctx) {
-		stdout.println(ctx.getText());
 		return visitChildren(ctx); }
 
 	//TODO visitElse_S
@@ -88,7 +65,7 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 
 
 	@Override public Value visitAssignment(matrixoParser.AssignmentContext ctx) {
-		stdout.println(ctx.getText());
+		System.out.println(ctx.getText());
 		String varName = ctx.IDENTIFIER().getText();
 		String op = ctx.ASSIGN_OP().getText();
 		if (globalMemory.getVariables().containsKey(varName)) {
@@ -152,7 +129,8 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 
 	//todo expressions
 	@Override public Value visitBoolOp(matrixoParser.BoolOpContext ctx) {
-		stdout.println(ctx.getText());
+		//stdout.println(ctx.getText());
+
 		return visitChildren(ctx); }
 
 	@Override public Value visitAtomExp(matrixoParser.AtomExpContext ctx) { return visit(ctx.atom()); }
@@ -214,13 +192,32 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 		return new Value(v);
 	}
 
-	// !!!! todo Function_call, add scope with local params passed into it, evaluate
-	@Override public Value visitFunction_call(matrixoParser.Function_callContext ctx) {
-
+	@Override
+	public Value visitFunction_call(matrixoParser.Function_callContext ctx) {
 		String fnName = ctx.IDENTIFIER().getText();
 		if (globalMemory.getFunctions().containsKey(fnName)) {
-			stdout.println(globalMemory.getFunction(fnName));
-			return visit(globalMemory.getFunction(fnName).getCtx().block());
+			// get values of arguments, pass them to local scope of function block
+			Map<String, Value> localVars = new LinkedHashMap<>();
+			List<Parameter> params = globalMemory.getFunction(fnName).getParameters();
+			ArrayList<Value> args = visitArgument_list(ctx.argument_list()).getArgList();
+
+			try {
+				if (params.size() == args.size()) {
+					for (int i = 0; i < params.size(); i++) {
+						Parameter p = params.get(i);
+						Value v = args.get(i);
+						if (!p.getType().equals(v.getType())) throw new ParameterArgumentTypeMismatchException(ctx.getText(), p, v);
+						else localVars.put(params.get(i).getName(), v);
+					}
+				} else throw new ParameterArgumentNumberMismatchException(ctx.getText());
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+
+			Memory localMem = new Memory(localVars, globalMemory.getFunctions());
+			matrixoFunctionVisitor FV = new matrixoFunctionVisitor(localMem);
+			//System.out.println(globalMemory.getFunction(fnName));
+			return FV.visitFunction_call(ctx);
 		}
 		// todo add inbuilt func
 		else if (inbuiltFunctions.contains(fnName)) {
@@ -233,7 +230,8 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 	@Override public Value visitArgument_list(matrixoParser.Argument_listContext ctx) {
 		ArrayList<Value> args = new ArrayList<>();
 		for (ParseTree child : ctx.children) {
-			if (child != ctx.COMMA()) args.add(visit(child));
+			if (!child.getText().equals(","))
+				args.add(visit(child));
 		}
 		return new Value(args);
 	}

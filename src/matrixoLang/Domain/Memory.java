@@ -4,8 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Memory {
-    private final Map<String, Value> variables = new HashMap<>();
-    private final Map<String, Function> functions = new HashMap<>();
+    private final Map<String, Value> variables;
+    private final Map<String, Function> functions;
+
+    public Memory(Map<String, Value> v, Map<String, Function> f) {
+        variables = v;
+        functions = f;
+    }
+
+    public Memory() {
+        variables = new HashMap<>();
+        functions = new HashMap<>();
+    }
+
+    public Memory(Memory m) {
+        variables = m.getVariables();
+        functions = m.getFunctions();
+    }
 
     public Value getLocalVar(String name) {
         return variables.get(name);

@@ -39,7 +39,7 @@ public class matrixoInterpreter {
         try {
             ParseTree AST = parser.program();
             memory = new Memory();
-            matrixoBaseVisitor evaluator = new matrixoBaseVisitor(memory, stdin, stdoutPrint, stderrorPrint);
+            matrixoBaseVisitor evaluator = new matrixoBaseVisitor();
             evaluator.visit(AST);
         } catch (Exception e) {
             stderrorPrint.println(e.getMessage());

@@ -45,6 +45,7 @@ public class Value {
         value = v;
     }
 
+    public ArrayList<Value> getArgList() {return (ArrayList<Value>) value;}
 
     public ArrayList<Double> getList() {
         return (ArrayList<Double>) value;
