@@ -1,5 +1,5 @@
 package matrixoLang.Exceptions;
-import matrixoLang.*;
+import matrixoLang.Domain.Function;
 
 public class FunctionWithNameAlreadyDefinedException extends RuntimeException{
     public FunctionWithNameAlreadyDefinedException(Function signature) {

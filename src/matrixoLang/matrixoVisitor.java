@@ -78,8 +78,7 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBlock(matrixoParser.BlockContext ctx);
-
-    /**
+	/**
 	 * Visit a parse tree produced by {@link matrixoParser#return_type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -127,25 +126,75 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitType(matrixoParser.TypeContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code boolOp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitBoolOp(matrixoParser.BoolOpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code atomExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitAtomExp(matrixoParser.AtomExpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code sqrtExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitSqrtExp(matrixoParser.SqrtExpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code prefixExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitPrefixExp(matrixoParser.PrefixExpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code powerExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitPowerExp(matrixoParser.PowerExpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code importCall}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitImportCall(matrixoParser.ImportCallContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code getCall}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitGetCall(matrixoParser.GetCallContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code firstOrdExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitFirstOrdExp(matrixoParser.FirstOrdExpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code matrixInit}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitMatrixInit(matrixoParser.MatrixInitContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code secondOrdExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitSecondOrdExp(matrixoParser.SecondOrdExpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link matrixoParser#atom}.

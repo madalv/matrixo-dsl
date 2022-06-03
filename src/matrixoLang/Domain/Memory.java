@@ -1,4 +1,4 @@
-package matrixoLang;
+package matrixoLang.Domain;
 
 import java.util.HashMap;
 import java.util.Map;

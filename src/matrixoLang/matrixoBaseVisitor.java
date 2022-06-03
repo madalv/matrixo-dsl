@@ -1,7 +1,7 @@
-// Generated from C:/Users/Vlada/Downloads/pbl-sem-4/matrixoLang/src/matrixoLang\matrixo.g4 by ANTLR 4.9.2
 package matrixoLang;
 
-
+import matrixoLang.Domain.*;
+import matrixoLang.Exceptions.*;
 import matrixoLang.Exceptions.AssignToNonExistentVarException;
 import matrixoLang.Exceptions.AssignmentMismatchException;
 import matrixoLang.Exceptions.AttemptToAccessNonDefinedVarException;
@@ -77,7 +77,7 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 	//TODO visitElse_S
 	@Override public Value visitElse_s(matrixoParser.Else_sContext ctx) { return visitChildren(ctx); }
 
-    @Override public Value visitWhile_s(matrixoParser.While_sContext ctx) { return visitChildren(ctx); }
+	@Override public Value visitWhile_s(matrixoParser.While_sContext ctx) { return visitChildren(ctx); }
 
 	//TODO visitBlock
 	@Override public Value visitBlock(matrixoParser.BlockContext ctx) {
@@ -92,20 +92,20 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 		String varName = ctx.IDENTIFIER().getText();
 		String op = ctx.ASSIGN_OP().getText();
 		if (globalMemory.getVariables().containsKey(varName)) {
-				// case =
-				// double - double, matrix - matrix
-				// case all else
-				// double - double, matrix - double, matrix - matrix
-				Value val = globalMemory.getLocalVar(varName);
-				Value assigned = visit(ctx.expression());
-				String type1 = val.getType().toLowerCase();
-				String type2 = assigned.getType().toLowerCase();
+			// case =
+			// double - double, matrix - matrix
+			// case all else
+			// double - double, matrix - double, matrix - matrix
+			Value val = globalMemory.getLocalVar(varName);
+			Value assigned = visit(ctx.expression());
+			String type1 = val.getType().toLowerCase();
+			String type2 = assigned.getType().toLowerCase();
 
 
-				// TODO: implement other assignment ops than =
-				if (val == null ||type2.equals(type1) && op.equals("=")) {
-					globalMemory.getVariables().replace(varName, assigned);
-				} else throw new AssignmentMismatchException(type1, type2, varName);
+			// TODO: implement other assignment ops than =
+			if (val == null ||type2.equals(type1) && op.equals("=")) {
+				globalMemory.getVariables().replace(varName, assigned);
+			} else throw new AssignmentMismatchException(type1, type2, varName);
 
 		} else throw new AssignToNonExistentVarException(varName);
 		return null;

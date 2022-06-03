@@ -7,7 +7,7 @@ vector v1 = (1 2 3.234);
 print(m2);
 
 fun f1 (double d, matrix m) ret vector {
-for (int i = 0; i < 5; ++i) {
+for (i from 0 to 5) {
     if (mo != i) {
         mo = mo + 1;
     } else if (mo >= i + 3 * 5 ** 2 + %%(2 + 3.3) + 4.4) {

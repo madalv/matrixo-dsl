@@ -1,4 +1,5 @@
-package matrixoLang;
+package matrixoLang.Domain;
+import matrixoLang.*;
 
 import java.util.List;
 

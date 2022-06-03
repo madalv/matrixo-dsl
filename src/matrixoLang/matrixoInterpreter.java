@@ -1,5 +1,6 @@
 package matrixoLang;
 
+import matrixoLang.Domain.Memory;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.BailErrorStrategy;

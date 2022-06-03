@@ -24,7 +24,7 @@ return_s: RETURN expression;
 
 ctrlflow_s: for_s | if_s | while_s;
 
-for_s: FOR L_PAR variable_dec SEMICOL expression SEMICOL expression R_PAR statement;
+for_s: FOR L_PAR IDENTIFIER FROM expression TO expression R_PAR statement;
 
 if_s: IF L_PAR expression R_PAR statement (else_s)?;
 
@@ -127,6 +127,7 @@ IMPORT: 'import' | 'imp';
 FILE_TYPE: 'odt' | 'xlsx' | 'csv';
 SPACE: [ \t\n\r] -> skip;
 FROM: 'from';
+TO: 'to';
 IDENTIFIER: [a-zA-Z_][0-9a-zA-Z_]*;
 NAME: [a-zA-Z0-9_]+ '.' ('csv' | 'xlsx');
 PATH: ([a-zA-Z0-9_]':\\')([a-zA-Z0-9_]+ '\\')* | '\\' ;

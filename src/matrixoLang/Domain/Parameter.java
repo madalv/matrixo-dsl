@@ -1,4 +1,4 @@
-package matrixoLang;
+package matrixoLang.Domain;
 
 public class Parameter {
     private final String name;
