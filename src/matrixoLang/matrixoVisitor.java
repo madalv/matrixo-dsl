@@ -78,7 +78,8 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitBlock(matrixoParser.BlockContext ctx);
-	/**
+
+    /**
 	 * Visit a parse tree produced by {@link matrixoParser#return_type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

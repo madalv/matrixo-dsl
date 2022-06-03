@@ -40,17 +40,11 @@ public class Value {
         type = t;
     }
 
-    public Value(String id) {
-        value = null;
-    }
 
     public Value(ArrayList<?> v) {
         value = v;
     }
 
-    public Object getNull() {
-        return null;
-    }
 
     public ArrayList<Double> getList() {
         return (ArrayList<Double>) value;

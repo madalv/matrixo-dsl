@@ -4,21 +4,18 @@ package matrixoLang;
 
 import matrixoLang.Exceptions.AssignToNonExistentVarException;
 import matrixoLang.Exceptions.AssignmentMismatchException;
+import matrixoLang.Exceptions.AttemptToAccessNonDefinedVarException;
 import matrixoLang.Exceptions.CallNonDefinedFunctionException;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
-import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import javax.management.ValueExp;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 
 public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implements matrixoVisitor<Value> {
@@ -53,22 +50,20 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 		printStream.close();
 	}
 
-	//TODO visitStatement
+
 	@Override public Value visitStatement(matrixoParser.StatementContext ctx) {
 		return visitChildren(ctx); }
 
-	//TODO visitNosemicolon_s
+
 	@Override public Value visitNosemicolon_s(matrixoParser.Nosemicolon_sContext ctx) { return visitChildren(ctx); }
 
-	//TODO visitSemicolon_s
+
 	@Override public Value visitSemicolon_s(matrixoParser.Semicolon_sContext ctx) { return visitChildren(ctx); }
 
-	//TODO visitReturn_s
-	@Override public Value visitReturn_s(matrixoParser.Return_sContext ctx) { return visitChildren(ctx); }
 
-	//TODO visitCtrlflow_s
+	@Override public Value visitReturn_s(matrixoParser.Return_sContext ctx) { return visit(ctx.expression()); }
+
 	@Override public Value visitCtrlflow_s(matrixoParser.Ctrlflow_sContext ctx) {
-		stdout.println(ctx.getText());
 		return visitChildren(ctx); }
 
 	//TODO visitFor_s
@@ -84,12 +79,11 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 
     @Override public Value visitWhile_s(matrixoParser.While_sContext ctx) { return visitChildren(ctx); }
 
-	//TODO visitBlock, rm placeholder
+	//TODO visitBlock
 	@Override public Value visitBlock(matrixoParser.BlockContext ctx) {
-		return new Value(new Matrix(), "vector");
+		return visitChildren(ctx);
 	}
 
-	//TODO visitReturn_type
 	@Override public Value visitReturn_type(matrixoParser.Return_typeContext ctx) { return visitChildren(ctx); }
 
 
@@ -111,7 +105,7 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 				// TODO: implement other assignment ops than =
 				if (val == null ||type2.equals(type1) && op.equals("=")) {
 					globalMemory.getVariables().replace(varName, assigned);
-				} else throw new AssignmentMismatchException(type1);
+				} else throw new AssignmentMismatchException(type1, type2, varName);
 
 		} else throw new AssignToNonExistentVarException(varName);
 		return null;
@@ -144,7 +138,7 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 			if (v.getType().equalsIgnoreCase(ctx.type().getText())) {
 				globalMemory.assignLocalVar(ctx.IDENTIFIER().getText(), v);
 			}
-			else throw new AssignmentMismatchException(ctx.type().getText());
+			else throw new AssignmentMismatchException(ctx.type().getText(), v.getType(), ctx.IDENTIFIER().getText());
 		} else globalMemory.assignLocalVar(ctx.IDENTIFIER().getText(), null);
 
 		return null;
@@ -154,7 +148,6 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 		return visit(ctx.expression());
 	}
 
-	//todo visitType
 	@Override public Value visitType(matrixoParser.TypeContext ctx) { return visitChildren(ctx); }
 
 	//todo expressions
@@ -170,11 +163,11 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 
 	@Override public Value visitPowerExp(matrixoParser.PowerExpContext ctx) { return visitChildren(ctx); }
 
-	//todo importCall
+	//todo remove placeholder
 	@Override public Value visitImportCall(matrixoParser.ImportCallContext ctx) { return new Value(new Matrix(), "matrix"); }
 
 	//todo getCall
-	@Override public Value visitGetCall(matrixoParser.GetCallContext ctx) { return visitChildren(ctx); }
+	@Override public Value visitGetCall(matrixoParser.GetCallContext ctx) { return visit(ctx.get_call()); }
 
 	@Override public Value visitFirstOrdExp(matrixoParser.FirstOrdExpContext ctx) { return visitChildren(ctx); }
 
@@ -184,9 +177,16 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 
 	@Override public Value visitSecondOrdExp(matrixoParser.SecondOrdExpContext ctx) { return visitChildren(ctx); }
 
-	@Override public Value visitAtom(matrixoParser.AtomContext ctx) { return visitChildren(ctx); }
-
-	@Override public Value visitGet_call(matrixoParser.Get_callContext ctx) { return visitChildren(ctx); }
+	@Override public Value visitAtom(matrixoParser.AtomContext ctx) {
+		if (ctx.IDENTIFIER() != null) {
+			if (globalMemory.getVariables().containsKey(ctx.IDENTIFIER().getText())) return globalMemory.getLocalVar(ctx.IDENTIFIER().getText());
+			else throw new AttemptToAccessNonDefinedVarException(ctx.IDENTIFIER().getText());
+		} else if (ctx.TRUE() != null) return new Value(Boolean.TRUE, "bool");
+		else if (ctx.FALSE() != null) return new Value(Boolean.FALSE, "bool");
+		else if (ctx.NUMBER() != null) return new Value(Double.parseDouble(ctx.NUMBER().getText()), "double");
+		else if (ctx.paranthesis_expr() != null) return visitParanthesis_expr(ctx.paranthesis_expr());
+		else return visitFunction_call(ctx.function_call());
+	}
 
 	@Override public Value visitMatrix_init(matrixoParser.Matrix_initContext ctx) {
 
@@ -220,8 +220,6 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 		String fnName = ctx.IDENTIFIER().getText();
 		if (globalMemory.getFunctions().containsKey(fnName)) {
 			stdout.println(globalMemory.getFunction(fnName));
-			//todo REMOVE PLACEHOLDER
-			//List<>
 			return visit(globalMemory.getFunction(fnName).getCtx().block());
 		}
 		// todo add inbuilt func
@@ -240,9 +238,12 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 		return new Value(args);
 	}
 
+	//todo remove placeholders in get, import
+	@Override public Value visitGet_call(matrixoParser.Get_callContext ctx) { return visitChildren(ctx); }
+
 	@Override public Value visitImport_call(matrixoParser.Import_callContext ctx) { return visitChildren(ctx); }
 
-	@Override public Value visitParanthesis_expr(matrixoParser.Paranthesis_exprContext ctx) { return visitChildren(ctx); }
+	@Override public Value visitParanthesis_expr(matrixoParser.Paranthesis_exprContext ctx) { return visit(ctx.expression()); }
 
 	@Override public Value visitFilename(matrixoParser.FilenameContext ctx) { return visitChildren(ctx); }
 }

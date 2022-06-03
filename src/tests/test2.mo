@@ -14,6 +14,8 @@ for (int i = 0; i < 5; ++i) {
 
     }
     }
+    vector vv = (1 2.4);
+    return vv;
 }
 
 v1 = f1(1.2, m1);
