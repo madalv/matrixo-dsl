@@ -1,10 +1,7 @@
 package matrixoLang;
 
 import matrixoLang.Domain.*;
-import matrixoLang.Exceptions.AttemptToAccessNonDefinedVarException;
-import matrixoLang.Exceptions.CallNonDefinedFunctionException;
-import matrixoLang.Exceptions.ParameterArgumentNumberMismatchException;
-import matrixoLang.Exceptions.ParameterArgumentTypeMismatchException;
+import matrixoLang.Exceptions.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -108,8 +105,10 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor<Value>{
             return new Value(v, "vector");
         } else {
             Matrix m = new Matrix();
+            int rowSize = visitRow(ctx.row(0)).getList().size();
             for (int i = 0; i < ctx.getChildCount() - 1; i++) { // get the rows
                 ArrayList<Double> row = visitRow(ctx.row(i)).getList();
+                if (row.size() != rowSize) throw new RowNotOfEqualLengthException(ctx.start.getLine());
                 m.add(row);
             }
             return new Value(m, "matrix");

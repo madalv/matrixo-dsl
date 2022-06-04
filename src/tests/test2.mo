@@ -4,8 +4,13 @@ matrix m1 = import matrix from D:\Code\ad.csv;
 
 matrix m2 = import matrix from ad.xlsx;
 
+matrix mx1 = (
+1 223.4,
+323 4,
+2 3
+);
 
-print(m2);
+print(mx1, v1);
 
 fun f1 (double d, matrix m) ret vector {
 

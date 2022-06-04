@@ -11,7 +11,7 @@ public class Value {
     }
 
     public Value(Matrix v, String t) {
-            value = v.getValue();
+            value = v;
             type = t;
     }
 
@@ -21,7 +21,7 @@ public class Value {
     }
 
     public Value(Vector v, String t) {
-        value = v.getValue();
+        value = v;
         type = t;
     }
 
@@ -55,16 +55,17 @@ public class Value {
         return (ArrayList<Parameter>) value;
     }
 
-    public ArrayList<Double> getMatrix() {
-        if (value instanceof ArrayList<?>) {
-            if (((ArrayList<?>) value).size() > 1) return (ArrayList<Double>) value;
+    //todo add error handling
+    public Matrix getMatrix() {
+        if (value instanceof Matrix) {
+            return (Matrix) value;
         }
         return null;
     }
 
-    public ArrayList<Double> getVector() {
-        if (value instanceof ArrayList<?>) {
-            if (((ArrayList<?>) value).size() == 1) return (ArrayList<Double>) value;
+    public Vector getVector() {
+        if (value instanceof Vector) {
+             return (Vector) value;
         }
         return null;
     }
@@ -87,9 +88,6 @@ public class Value {
 
     @Override
     public String toString() {
-        return "Value{" +
-                "value=" + value +
-                ", type='" + type + '\'' +
-                '}';
+        return value.toString();
     }
 }

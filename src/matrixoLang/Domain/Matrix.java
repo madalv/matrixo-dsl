@@ -2,6 +2,7 @@ package matrixoLang.Domain;
 
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Matrix{
     private ArrayList<ArrayList<Double>> value;
@@ -28,10 +29,8 @@ public class Matrix{
 
     @Override
     public String toString() {
-        return  value.toString();
+        return  value.stream().map(r -> r.stream().map(String::valueOf).collect(Collectors.joining(" ", "", ",\n")))
+                .collect(Collectors.joining("", "( \n", ")")).replaceFirst(",\n\\)", "\n)");
     }
 
-    //    public Double getDeterminant(Matrix<T> m) {
-//        //TODO: ERROR HANDLING -- uneven matrix / boolean generic
-//    }
 }

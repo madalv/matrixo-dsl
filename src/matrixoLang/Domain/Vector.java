@@ -1,6 +1,7 @@
 package matrixoLang.Domain;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Vector{
     private ArrayList<Double> value;
@@ -14,7 +15,6 @@ public class Vector{
     }
 
 
-
     public void setValue(ArrayList<Double> value) {
         this.value = value;
     }
@@ -25,7 +25,6 @@ public class Vector{
 
     @Override
     public String toString() {
-        return value.toString();
-
+        return value.stream().map(String::valueOf).collect(Collectors.joining(" ", "(", ")"));
     }
 }
