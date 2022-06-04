@@ -69,6 +69,8 @@ public class Value {
         return null;
     }
 
+    public Boolean getBoolean() {return (Boolean) value;}
+
     public Integer getInteger() { return (Integer) value; }
 
     public String getString() {

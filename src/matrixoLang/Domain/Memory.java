@@ -22,6 +22,11 @@ public class Memory {
         functions = m.getFunctions();
     }
 
+    public void addToMemory(Memory m) {
+        functions.putAll(m.getFunctions());
+        variables.putAll(m.getVariables());
+    }
+
     public Value getLocalVar(String name) {
         return variables.get(name);
     }
@@ -49,6 +54,14 @@ public class Memory {
     public void free() {
         variables.clear();
         functions.clear();
+    }
+
+    @Override
+    public String toString() {
+        return "Memory{" +
+                "variables=" + variables +
+                ", functions=" + functions +
+                '}';
     }
 }
 
