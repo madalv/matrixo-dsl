@@ -50,6 +50,7 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor<Value>{
             matrixoStatementVisitor SV = new matrixoStatementVisitor(localMem);
             //System.out.println(localMemory.getFunction(fnName));
             return SV.visitBlock(localMemory.getFunction(fnName).getCtx().block());
+
         }
         // todo add inbuilt func
         else if (inbuiltFunctions.contains(fnName)) {

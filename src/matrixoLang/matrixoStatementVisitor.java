@@ -4,6 +4,7 @@ import matrixoLang.Domain.Memory;
 import matrixoLang.Domain.Value;
 import matrixoLang.Exceptions.AssignToNonExistentVarException;
 import matrixoLang.Exceptions.AssignmentMismatchException;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
     private final Memory localMemory;
@@ -12,7 +13,6 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
         super();
         this.localMemory = localMemory;
     }
-
 
     @Override public Value visitVariable_dec(matrixoParser.Variable_decContext ctx) {
 //        System.out.println(globalMemory);
@@ -35,7 +35,7 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
 
     @Override public Value visitAssignment(matrixoParser.AssignmentContext ctx) {
         matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
-        System.out.println(ctx.getText());
+        //System.out.println(ctx.getText());
         String varName = ctx.IDENTIFIER().getText();
         String op = ctx.ASSIGN_OP().getText();
         if (localMemory.getVariables().containsKey(varName)) {
@@ -73,17 +73,24 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
 
     @Override public Value visitSemicolon_s(matrixoParser.Semicolon_sContext ctx) {
         if (ctx.variable_dec() != null) return visitVariable_dec(ctx.variable_dec());
-        else if (ctx.return_s() != null) return visitReturn_s(ctx.return_s());
+        else if (ctx.return_s() != null) {
+            //System.out.println(visitReturn_s(ctx.return_s()));
+            return visitReturn_s(ctx.return_s());
+        }
         else if (ctx.assignment() != null) return visitAssignment(ctx.assignment());
         else if (ctx.expression() != null) {
             matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
             return EV.visit(ctx.expression());
         }
-        else return null; // "break not implemented yet"
+        else return null; // "break" not implemented yet
     }
 
 
-    @Override public Value visitReturn_s(matrixoParser.Return_sContext ctx) { return visit(ctx.expression()); }
+    @Override public Value visitReturn_s(matrixoParser.Return_sContext ctx) {
+
+        matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
+        return EV.visit(ctx.expression());
+    }
 
     @Override public Value visitCtrlflow_s(matrixoParser.Ctrlflow_sContext ctx) {
         return visitChildren(ctx); }
@@ -91,7 +98,7 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
     //TODO visitFor_s
     @Override public Value visitFor_s(matrixoParser.For_sContext ctx) { return visitChildren(ctx); }
 
-    //TODO visitIf_s
+
     @Override public Value visitIf_s(matrixoParser.If_sContext ctx) {
         matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
         Boolean evaluated = EV.visit(ctx.expression()).getBoolean();
@@ -102,13 +109,23 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
         return null;
     }
 
-    //TODO visitElse_S
-    @Override public Value visitElse_s(matrixoParser.Else_sContext ctx) { return visitChildren(ctx); }
+    @Override public Value visitElse_s(matrixoParser.Else_sContext ctx) {
+        matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
+
+        if (ctx.if_s() != null) return visitIf_s(ctx.if_s());
+        else return visitStatement(ctx.statement());
+    }
 
     @Override public Value visitWhile_s(matrixoParser.While_sContext ctx) { return visitChildren(ctx); }
 
-    //TODO visitBlock
     @Override public Value visitBlock(matrixoParser.BlockContext ctx) {
-        return visitChildren(ctx);
+
+        for (matrixoParser.StatementContext child : ctx.statement()) {
+            Value res = visitStatement(child);
+//            System.out.println(child.getText());
+//            System.out.println(res);
+            if (res != null) return res;
+        }
+        return null;
     }
 }

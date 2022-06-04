@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class matrixoExpressionVisitor extends matrixoBaseVisitor<Value>{
     private final Memory localMemory;
+    public static final double SMALL_VALUE = 0.00000000001;
 
     public matrixoExpressionVisitor(Memory localMemory) {
         super();
@@ -20,6 +21,45 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor<Value>{
     }
 
     @Override public Value visitBoolOp(matrixoParser.BoolOpContext ctx) {
+
+        Value left = visit(ctx.expression(0));
+        Value right = visit(ctx.expression(1));
+
+
+        try {
+            switch (ctx.BOOL_OP().getText()) {
+                case "==":
+                    if (left.getType().equals(right.getType()) && left.getType().equals("double")) {
+                        Boolean res = Math.abs(left.getDouble() - right.getDouble()) < SMALL_VALUE;
+                        return new Value(res, "boolean");
+                    } else if (left.getType().equals(right.getType()))
+                        return new Value(left.equals(right), "boolean");
+                    break;
+                case "!=":
+                    if (left.getType().equals(right.getType()) && left.getType().equals("double")) {
+                        Boolean res = Math.abs(left.getDouble() - right.getDouble()) >= SMALL_VALUE;
+                        return new Value(res, "boolean");
+                    } else if (left.getType().equals(right.getType()))
+                        return new Value(!left.equals(right), "boolean");
+                    break;
+                case "&&":
+                case "and":
+                    return new Value(left.getBoolean() && right.getBoolean(), "boolean");
+                case "||":
+                case "or":
+                    return new Value(left.getBoolean() || right.getBoolean(), "boolean");
+                case "<":
+                    return new Value(left.getDouble() < right.getDouble(), "boolean");
+                case ">":
+                    return new Value(left.getDouble() > right.getDouble(), "boolean");
+                case ">=":
+                    return new Value(left.getDouble() >= right.getDouble(), "boolean");
+                case "<=":
+                    return new Value(left.getDouble() <= right.getDouble(), "boolean");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
         return visitChildren(ctx);
     }

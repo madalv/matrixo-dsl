@@ -25,7 +25,11 @@ public class matrixoBaseVisitor<V> extends AbstractParseTreeVisitor<Value> imple
 
 
 	@Override public Value visitStatement(matrixoParser.StatementContext ctx) {
-		return visitChildren(ctx);
+
+//		matrixoStatementVisitor SV = new matrixoStatementVisitor(globalMemory);
+		if (ctx.semicolon_s() != null) return visitSemicolon_s(ctx.semicolon_s());
+		else return visitNosemicolon_s(ctx.nosemicolon_s());
+
 	}
 
 
@@ -140,7 +144,6 @@ public class matrixoBaseVisitor<V> extends AbstractParseTreeVisitor<Value> imple
 		else return visitFunction_call(ctx.function_call());
 	}
 
-	//
 	@Override public Value visitMatrix_init(matrixoParser.Matrix_initContext ctx) {
 
 		if (ctx.getChildCount() == 2) {
@@ -174,13 +177,8 @@ public class matrixoBaseVisitor<V> extends AbstractParseTreeVisitor<Value> imple
 	}
 
 	@Override public Value visitArgument_list(matrixoParser.Argument_listContext ctx) {
-		matrixoExpressionVisitor EV = new matrixoExpressionVisitor(globalMemory);
-		ArrayList<Value> args = new ArrayList<>();
-		for (ParseTree child : ctx.children) {
-			if (!child.getText().equals(","))
-				args.add(EV.visit(child));
-		}
-		return new Value(args);
+		matrixoFunctionVisitor FV = new matrixoFunctionVisitor(globalMemory);
+		return FV.visitArgument_list(ctx);
 	}
 
 	//todo remove placeholders in get, import
