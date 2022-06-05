@@ -5,17 +5,17 @@ import matrixoLang.Domain.Memory;
 import matrixoLang.Domain.Parameter;
 import matrixoLang.Domain.Value;
 import matrixoLang.Exceptions.CallNonDefinedFunctionException;
+import matrixoLang.Exceptions.FunctionWithNameAlreadyDefinedException;
 import matrixoLang.Exceptions.ParameterArgumentNumberMismatchException;
 import matrixoLang.Exceptions.ParameterArgumentTypeMismatchException;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class matrixoFunctionVisitor extends matrixoBaseVisitor<Value>{
+public class matrixoFunctionVisitor extends matrixoBaseVisitor {
 
     private final Memory localMemory;
 
@@ -23,8 +23,6 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor<Value>{
         super();
         this.localMemory = localMemory;
     }
-
-    //todo complete function visitor
 
     private Map<String, Value> getVariablesLocalScope(String fnName, matrixoParser.Function_callContext ctx) {
         Map<String, Value> localVars = new LinkedHashMap<>();
@@ -53,16 +51,14 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor<Value>{
             // get values of arguments, pass them to local scope of function block
             Memory localMem = new Memory(getVariablesLocalScope(fnName, ctx), localMemory.getFunctions());
             matrixoStatementVisitor SV = new matrixoStatementVisitor(localMem);
-            //System.out.println(localMemory.getFunction(fnName));
             return SV.visitBlock(localMemory.getFunction(fnName).getCtx().block());
 
         }
-        // todo add inbuilt func
+        // todo add inbuilt funcs
         else if (inbuiltFunctions.contains(fnName)) {
-
             if (fnName.equals("print")) {
                 ArrayList<Value> args = visitArgument_list(ctx.argument_list()).getArgList();
-                for (Value val : args) System.out.println(val);
+                args.forEach(System.out::println);
                 return null;
             }
             return null;
@@ -71,10 +67,10 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor<Value>{
     }
 
     @Override public Value visitFunction_dec(matrixoParser.Function_decContext ctx) {
-
-        Function fn = new Function(ctx.IDENTIFIER().getText(), ctx.return_type().getText(), visit(ctx.parameter_list()).getParameters(), ctx);
-        localMemory.assignFunction(ctx.IDENTIFIER().getText(), fn);
-
+        String fnName = ctx.IDENTIFIER().getText();
+        if (localMemory.getFunctions().containsKey(fnName)) throw new FunctionWithNameAlreadyDefinedException(fnName, ctx.start.getLine());
+        Function fn = new Function(fnName, ctx.return_type().getText(), visitParameter_list(ctx.parameter_list()).getParameters(), ctx);
+        localMemory.assignFunction(fnName, fn);
         return null;
     }
 
@@ -86,5 +82,18 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor<Value>{
                 args.add(EV.visit(child));
         }
         return new Value(args);
+    }
+
+    @Override public Value visitParameter_list(matrixoParser.Parameter_listContext ctx) {
+
+        ArrayList<Parameter> ps = new ArrayList<>();
+        for (matrixoParser.ParameterContext child : ctx.parameter()) {
+            ps.add(visitParameter(child).getParameter());
+        }
+        return new Value(ps);
+    }
+
+    @Override public Value visitParameter(matrixoParser.ParameterContext ctx) {
+        return new Value(new Parameter(ctx.IDENTIFIER().getText(), ctx.type().getText()));
     }
 }

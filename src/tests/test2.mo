@@ -1,4 +1,4 @@
-vector v1 = (1 2 3.234);
+vector v = (1 2 3.234);
 
 matrix m1 = import matrix from D:\Code\ad.csv;
 
@@ -10,7 +10,7 @@ matrix mx1 = (
 2 3
 );
 
-print(mx1, v1);
+print(mx1, v);
 
 fun f1 (double d, matrix m) ret vector {
 
@@ -23,9 +23,9 @@ double i = 4.0;
         mo = mo + 1;
          }
 
-    vector vv = (1 2.4);
-    return vv;
+    vector v = (1 2.4);
+    return v;
 }
 
-v1 = f1(1.2, m1);
-print(v1);
+v = f1(1.2, m1);
+print(v);

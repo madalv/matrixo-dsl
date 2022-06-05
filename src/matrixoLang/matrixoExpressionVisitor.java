@@ -4,11 +4,8 @@ import matrixoLang.Domain.*;
 import matrixoLang.Exceptions.*;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
-public class matrixoExpressionVisitor extends matrixoBaseVisitor<Value>{
+public class matrixoExpressionVisitor extends matrixoBaseVisitor {
     private final Memory localMemory;
     public static final double SMALL_VALUE = 0.00000000001;
 
@@ -65,14 +62,26 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor<Value>{
 
     @Override public Value visitSqrtExp(matrixoParser.SqrtExpContext ctx) { return visitChildren(ctx); }
 
-    @Override public Value visitPrefixExp(matrixoParser.PrefixExpContext ctx) { return visitChildren(ctx); }
+    @Override public Value visitPrefixExp(matrixoParser.PrefixExpContext ctx) {
+
+        switch (ctx.PREFIX_OP().getText()) {
+            case "++":
+                Value val = this.visitAtom(ctx.atom());
+                if (!val.getType().equals(Type.DOUBLE.value)) throw new IllegalOperationException(val, ctx.start.getLine(), ctx.PREFIX_OP().getText());
+                return new Value(val.getDouble() + 1, Type.DOUBLE.value);
+            case "--":
+                val = this.visitAtom(ctx.atom());
+                if (!val.getType().equals(Type.DOUBLE.value)) throw new IllegalOperationException(val, ctx.start.getLine(), ctx.PREFIX_OP().getText());
+                return new Value(val.getDouble() - 1, Type.DOUBLE.value);
+            default: throw new UnknownOperatorException(ctx.start.getLine(), ctx.PREFIX_OP().getText());
+        }
+    }
 
     @Override public Value visitPowerExp(matrixoParser.PowerExpContext ctx) { return visitChildren(ctx); }
 
-    //todo remove placeholder
-    @Override public Value visitImportCall(matrixoParser.ImportCallContext ctx) { return new Value(new Matrix(), "matrix"); }
+    @Override public Value visitImportCall(matrixoParser.ImportCallContext ctx) { return new Value(new Matrix(), Type.MATRIX.value); }
 
-    //todo getCall
+    //todo getCall, importCall
     @Override public Value visitGetCall(matrixoParser.GetCallContext ctx) { return visit(ctx.get_call()); }
 
     @Override public Value visitFirstOrdExp(matrixoParser.FirstOrdExpContext ctx) { return visitChildren(ctx); }
@@ -111,10 +120,20 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor<Value>{
                 if (row.size() != rowSize) throw new RowNotOfEqualLengthException(ctx.start.getLine());
                 m.add(row);
             }
-            return new Value(m, "matrix");
+            return new Value(m, Type.MATRIX.value);
         }
     }
 
+    @Override public Value visitRow(matrixoParser.RowContext ctx) {
+        ArrayList<Double> v = new ArrayList<>();
+        for (var node : ctx.children) {
+            String text = node.getText();
+            if (text.equals(",") || text.equals(")")) continue;
+            Double d = Double.parseDouble(text);
+            v.add(d);
+        }
+        return new Value(v);
+    }
 
     //todo remove placeholders in get, import
     @Override public Value visitGet_call(matrixoParser.Get_callContext ctx) { return visitChildren(ctx); }

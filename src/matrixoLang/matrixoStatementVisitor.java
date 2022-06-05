@@ -1,12 +1,14 @@
 package matrixoLang;
 
 import matrixoLang.Domain.Memory;
+import matrixoLang.Domain.Type;
 import matrixoLang.Domain.Value;
 import matrixoLang.Exceptions.AssignToNonExistentVarException;
 import matrixoLang.Exceptions.AssignmentMismatchException;
-import org.antlr.v4.runtime.tree.ParseTree;
 
-public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
+import static matrixoLang.matrixoExpressionVisitor.SMALL_VALUE;
+
+public class matrixoStatementVisitor extends matrixoBaseVisitor {
     private final Memory localMemory;
 
     public matrixoStatementVisitor(Memory localMemory) {
@@ -14,9 +16,14 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
         this.localMemory = localMemory;
     }
 
+    @Override public Value visitStatement(matrixoParser.StatementContext ctx) {
+
+        if (ctx.semicolon_s() != null) return visitSemicolon_s(ctx.semicolon_s());
+        else return visitNosemicolon_s(ctx.nosemicolon_s());
+
+    }
+
     @Override public Value visitVariable_dec(matrixoParser.Variable_decContext ctx) {
-//        System.out.println(globalMemory);
-//        System.out.println(localMemory);
         if (ctx.variable_init() != null) {
             Value v = visitVariable_init(ctx.variable_init());
             if (v.getType().equalsIgnoreCase(ctx.type().getText())) {
@@ -35,7 +42,6 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
 
     @Override public Value visitAssignment(matrixoParser.AssignmentContext ctx) {
         matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
-        //System.out.println(ctx.getText());
         String varName = ctx.IDENTIFIER().getText();
         String op = ctx.ASSIGN_OP().getText();
         if (localMemory.getVariables().containsKey(varName)) {
@@ -58,9 +64,7 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
         return null;
     }
 
-
     @Override public Value visitNosemicolon_s(matrixoParser.Nosemicolon_sContext ctx) {
-
         if (ctx.function_dec() != null) {
             matrixoFunctionVisitor FV = new matrixoFunctionVisitor(localMemory);
             return FV.visitFunction_dec(ctx.function_dec());
@@ -70,11 +74,9 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
         else return null;
     }
 
-
     @Override public Value visitSemicolon_s(matrixoParser.Semicolon_sContext ctx) {
         if (ctx.variable_dec() != null) return visitVariable_dec(ctx.variable_dec());
         else if (ctx.return_s() != null) {
-            //System.out.println(visitReturn_s(ctx.return_s()));
             return visitReturn_s(ctx.return_s());
         }
         else if (ctx.assignment() != null) return visitAssignment(ctx.assignment());
@@ -85,19 +87,35 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
         else return null; // "break" not implemented yet
     }
 
-
     @Override public Value visitReturn_s(matrixoParser.Return_sContext ctx) {
-
         matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
         return EV.visit(ctx.expression());
     }
 
     @Override public Value visitCtrlflow_s(matrixoParser.Ctrlflow_sContext ctx) {
-        return visitChildren(ctx); }
+        if (ctx.for_s() != null) return visitFor_s(ctx.for_s());
+        else if (ctx.if_s() != null) return visitIf_s(ctx.if_s());
+        else return visitWhile_s(ctx.while_s());
+    }
 
-    //TODO visitFor_s
-    @Override public Value visitFor_s(matrixoParser.For_sContext ctx) { return visitChildren(ctx); }
+    @Override public Value visitFor_s(matrixoParser.For_sContext ctx) {
 
+        matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
+        Double from = EV.visit(ctx.expression(0)).getDouble();
+        Double to = EV.visit(ctx.expression(1)).getDouble();
+        String forLoopVar = ctx.IDENTIFIER().getText();
+        localMemory.assignLocalVar(forLoopVar, new Value(from, Type.DOUBLE.value));
+
+        while (Math.abs(from - to) >= SMALL_VALUE) {
+            if (ctx.statement().semicolon_s() != null && ctx.statement().semicolon_s().return_s() != null)
+                return visitStatement(ctx.statement());
+            visitStatement(ctx.statement());
+            from++;
+            localMemory.getVariables().replace(forLoopVar, new Value(from, Type.DOUBLE.value));
+        }
+
+        return null;
+    }
 
     @Override public Value visitIf_s(matrixoParser.If_sContext ctx) {
         matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
@@ -110,21 +128,29 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor<Value>{
     }
 
     @Override public Value visitElse_s(matrixoParser.Else_sContext ctx) {
-        matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
-
         if (ctx.if_s() != null) return visitIf_s(ctx.if_s());
         else return visitStatement(ctx.statement());
     }
 
-    @Override public Value visitWhile_s(matrixoParser.While_sContext ctx) { return visitChildren(ctx); }
+    @Override public Value visitWhile_s(matrixoParser.While_sContext ctx) {
+        matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
+        Boolean evaluated = EV.visit(ctx.expression()).getBoolean();
+
+        while (evaluated) {
+            if (ctx.statement().semicolon_s() != null && ctx.statement().semicolon_s().return_s() != null)
+                return visitStatement(ctx.statement());
+            visitStatement(ctx.statement());
+            evaluated = EV.visit(ctx.expression()).getBoolean();
+        }
+        return null;
+    }
 
     @Override public Value visitBlock(matrixoParser.BlockContext ctx) {
 
         for (matrixoParser.StatementContext child : ctx.statement()) {
-            Value res = visitStatement(child);
-//            System.out.println(child.getText());
-//            System.out.println(res);
-            if (res != null) return res;
+            // the ONLY return we need is the value of the return statement in case of function blocks
+            if (child.semicolon_s() != null && child.semicolon_s().return_s() != null) return visitStatement(child);
+            visitStatement(child);
         }
         return null;
     }

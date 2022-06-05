@@ -42,9 +42,9 @@ assignment: IDENTIFIER ASSIGN_OP expression;
 
 function_dec: FUNCTION IDENTIFIER L_PAR parameter_list R_PAR RETURNS return_type block;
 
-parameter_list: parameter*;
+parameter_list: (parameter (COMMA parameter)*)?;
 
-parameter: type IDENTIFIER (COMMA)?;
+parameter: type IDENTIFIER;
 
 variable_dec: type IDENTIFIER (variable_init)?;
 
@@ -76,7 +76,7 @@ row: NUMBER* (COMMA | R_PAR);
 
 function_call: IDENTIFIER L_PAR argument_list R_PAR;
 
-argument_list: (expression COMMA?)*;
+argument_list: (expression (COMMA expression)*)?;
 
 import_call: IMPORT (MATRIX | VECTOR) FROM filename;
 
