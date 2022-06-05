@@ -3,6 +3,8 @@ package matrixoLang;
 import matrixoLang.Domain.*;
 import matrixoLang.Exceptions.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -93,30 +95,35 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
         return new Value(Math.pow(base.getDouble(), exp.getDouble()), Type.DOUBLE.value);
     }
 
-    // todo add matrix operations for expressions, assignment & get call
+
     @Override public Value visitFirstOrdExp(matrixoParser.FirstOrdExpContext ctx) {
         Value v1 = this.visit(ctx.expression(0));
         Value v2 = this.visit(ctx.expression(1));
         String type1 = v1.getType();
         String type2 = v2.getType();
 
-        // complete with matrix functions and error
+
         switch (ctx.FIRST_ORDER_OP().getText()){
             case "*":
                 if (type1.equals(type2)) {
                     if (type1.equals(Type.MATRIX.value)) {
-
+                        //todo matrix * matrix
                     }
                     if (type1.equals(Type.VECTOR.value)) {
-
+                        //todo vector * vector (dot product)
                     }
                     if (type1.equals(Type.DOUBLE.value)) {
                         return new Value(v1.getDouble() * v2.getDouble(), Type.DOUBLE.value);
                     }
                 } else if (type1.equals(Type.MATRIX.value) && type2.equals(Type.DOUBLE.value)) {
-
+                    return new Value(Matrix.MultiplicationScalar(v1.getMatrix(), v2.getDouble()), Type.MATRIX.value);
+                } else if (type1.equals(Type.MATRIX.value) && type2.equals(Type.VECTOR.value)) {
+                    int cols = v1.getMatrix().getValue().get(0).size();
+                    int rows = v2.getVector().getValue().size();
+                    if (cols != rows) throw new ColumnsRowsMismatchException(ctx.start.getLine(), cols, rows);
+                    return new Value(Matrix.VectorMultiplication(v1.getMatrix(), v2.getVector()), Type.MATRIX.value);
                 } else if (type1.equals(Type.VECTOR.value) && type2.equals(Type.DOUBLE.value)) {
-
+                    //todo vector * scalar
                 }
                 else throw new IllegalOperationException(new ArrayList<>(List.of(v1, v2)), ctx.start.getLine(), ctx.FIRST_ORDER_OP().getText());
                 break;
@@ -124,9 +131,9 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                 if (type1.equals(type2) && type1.equals(Type.DOUBLE.value))
                     return new Value(v1.getDouble() / v2.getDouble(), Type.DOUBLE.value);
                  else if (type1.equals(Type.MATRIX.value) && type2.equals(Type.DOUBLE.value)) {
-
+                    return new Value(Matrix.MultiplicationScalar(v1.getMatrix(), 1/v2.getDouble()), Type.MATRIX.value);
                 } else if (type1.equals(Type.VECTOR.value) && type2.equals(Type.DOUBLE.value)){
-
+                    //todo vector / scalar
                 }
                 else throw new IllegalOperationException(new ArrayList<>(List.of(v1, v2)), ctx.start.getLine(), ctx.FIRST_ORDER_OP().getText());
                 break;
@@ -150,36 +157,36 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
             case "+":
                 if (type1.equals(type2)) {
                     if (type1.equals(Type.MATRIX.value)) {
-
+                        return new Value(Matrix.Addition(v1.getMatrix(), v2.getMatrix()), Type.MATRIX.value);
                     }
                     if (type1.equals(Type.VECTOR.value)) {
-
+                        //todo vector + vector
                     }
                     if (type1.equals(Type.DOUBLE.value)) {
                         return new Value(v1.getDouble() + v2.getDouble(), Type.DOUBLE.value);
                     }
                 } else if (type1.equals(Type.MATRIX.value) && type2.equals(Type.DOUBLE.value)) {
-
+                    return new Value(Matrix.AdditionScalar(v1.getMatrix(), v2.getDouble()), Type.MATRIX.value);
                 } else if (type1.equals(Type.VECTOR.value) && type2.equals(Type.DOUBLE.value)) {
-
+                    //todo vector + scalar
                 }
                 else throw new IllegalOperationException(new ArrayList<>(List.of(v1, v2)), ctx.start.getLine(), ctx.SECOND_ORDER_OP().getText());
                 break;
             case "-":
                 if (type1.equals(type2)) {
                     if (type1.equals(Type.MATRIX.value)) {
-
+                        return new Value(Matrix.Subtraction(v1.getMatrix(), v2.getMatrix()), Type.MATRIX.value);
                     }
                     if (type1.equals(Type.VECTOR.value)) {
-
+                        //todo vector - vector
                     }
                     if (type1.equals(Type.DOUBLE.value)) {
                         return new Value(v1.getDouble() - v2.getDouble(), Type.DOUBLE.value);
                     }
                 } else if (type1.equals(Type.MATRIX.value) && type2.equals(Type.DOUBLE.value)) {
-
+                    return new Value(Matrix.AdditionScalar(v1.getMatrix(), -v2.getDouble()), Type.MATRIX.value);
                 } else if (type1.equals(Type.VECTOR.value) && type2.equals(Type.DOUBLE.value)) {
-
+                    //todo vector - scalar
                 }
                 else throw new IllegalOperationException(new ArrayList<>(List.of(v1, v2)), ctx.start.getLine(), ctx.SECOND_ORDER_OP().getText());
                 break;
@@ -237,9 +244,33 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
 
     @Override public Value visitImportCall(matrixoParser.ImportCallContext ctx) { return visitImport_call(ctx.import_call()); }
 
-    @Override public Value visitGetCall(matrixoParser.GetCallContext ctx) { return visitGet_call(ctx.get_call()); }
+    @Override public Value visitGetCall(matrixoParser.GetCallContext ctx) throws NoSuchMethodException { return visitGet_call(ctx.get_call()); }
 
-    @Override public Value visitGet_call(matrixoParser.Get_callContext ctx) { return visitChildren(ctx); }
+    @Override public Value visitGet_call(matrixoParser.Get_callContext ctx) throws NoSuchMethodException {
+        String varName = ctx.IDENTIFIER(0).getText();
+        String fnName = ctx.IDENTIFIER(1).getText();
+        Value var;
+
+        if (localMemory.getVariables().containsKey(varName)) var = localMemory.getLocalVar(varName);
+        else throw new AttemptToAccessNonDefinedVarException(varName, ctx.start.getLine());
+
+        if (!inbuiltFunctions.contains(fnName)) throw new AttemptToGetUnknownFunctionException(ctx.start.getLine(), fnName);
+
+        if (var.getType().equals(Type.MATRIX.value)) {
+            try {
+                Matrix v = var.getMatrix();
+                Method getMethod = var.getMatrix().getClass().getDeclaredMethod(fnName, Matrix.class);
+                Matrix m = (Matrix) getMethod.invoke(v, v);
+                return new Value(m, Type.MATRIX.value);
+            } catch (NoSuchMethodException e) {
+                System.out.println(e.getMessage());
+            } catch (InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
 
     @Override public Value visitImport_call(matrixoParser.Import_callContext ctx) { return visitChildren(ctx); }
 

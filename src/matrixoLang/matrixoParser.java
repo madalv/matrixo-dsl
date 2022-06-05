@@ -1298,8 +1298,15 @@ public class matrixoParser extends Parser {
 		public GetCallContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof matrixoVisitor ) return ((matrixoVisitor<? extends T>)visitor).visitGetCall(this);
+			if ( visitor instanceof matrixoVisitor ) {
+				try {
+					return ((matrixoVisitor<? extends T>)visitor).visitGetCall(this);
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+				}
+			}
 			else return visitor.visitChildren(this);
+			return visitor.visitChildren(this);
 		}
 	}
 	public static class FirstOrdExpContext extends ExpressionContext {
@@ -1598,8 +1605,15 @@ public class matrixoParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_get_call; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof matrixoVisitor ) return ((matrixoVisitor<? extends T>)visitor).visitGet_call(this);
+			if ( visitor instanceof matrixoVisitor ) {
+				try {
+					return ((matrixoVisitor<? extends T>)visitor).visitGet_call(this);
+				} catch (NoSuchMethodException e) {
+					e.printStackTrace();
+				}
+			}
 			else return visitor.visitChildren(this);
+			return visitor.visitChildren(this);
 		}
 	}
 

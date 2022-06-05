@@ -56,7 +56,7 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor {
         }
         // todo add inbuilt funcs
         else if (inbuiltFunctions.contains(fnName)) {
-            if (fnName.equals("print")) {
+            if (fnName.equalsIgnoreCase("print")) {
                 ArrayList<Value> args = visitArgument_list(ctx.argument_list()).getArgList();
                 args.forEach(System.out::println);
                 return null;

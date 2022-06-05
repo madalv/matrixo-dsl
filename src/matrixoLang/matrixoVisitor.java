@@ -174,7 +174,7 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGetCall(matrixoParser.GetCallContext ctx);
+	T visitGetCall(matrixoParser.GetCallContext ctx) throws NoSuchMethodException;
 	/**
 	 * Visit a parse tree produced by the {@code firstOrdExp}
 	 * labeled alternative in {@link matrixoParser#expression}.
@@ -207,7 +207,7 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGet_call(matrixoParser.Get_callContext ctx);
+	T visitGet_call(matrixoParser.Get_callContext ctx) throws NoSuchMethodException;
 	/**
 	 * Visit a parse tree produced by {@link matrixoParser#matrix_init}.
 	 * @param ctx the parse tree
