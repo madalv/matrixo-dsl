@@ -82,12 +82,9 @@ import_call: IMPORT (MATRIX | VECTOR) FROM filename;
 
 paranthesis_expr: L_PAR expression R_PAR;
 
-//bool_expr: TRUE | FALSE | expression BOOL_OP expression;
-
 filename: (PATH)? NAME;
 
 // tokens
-
 RETURN: 'return';
 FOR: 'for';
 L_PAR: '(';
@@ -121,7 +118,7 @@ BOOL_OP: '&&' | 'and' | '||' | 'or' | '==' | '<' | '>' | '<=' | '>=' | '!=';
 ASSIGN_OP: '+=' | '-=' | '*=' | '/=' | '=';
 COMMA: ',';
 DOT: '.';
-NUMBER: [1-9][0-9]*'.'[0-9]* | [1-9][0-9]* | '0';
+NUMBER: [-]?[1-9][0-9]*'.'[0-9]* | [-]?[1-9][0-9]* | '0';
 GET: 'get';
 IMPORT: 'import' | 'imp';
 FILE_TYPE: 'odt' | 'xlsx' | 'csv';

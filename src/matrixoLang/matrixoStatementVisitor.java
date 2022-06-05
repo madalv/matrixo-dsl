@@ -5,6 +5,7 @@ import matrixoLang.Domain.Type;
 import matrixoLang.Domain.Value;
 import matrixoLang.Exceptions.AssignToNonExistentVarException;
 import matrixoLang.Exceptions.AssignmentMismatchException;
+import matrixoLang.Exceptions.VariableAlreadyDefinedInScope;
 
 import static matrixoLang.matrixoExpressionVisitor.SMALL_VALUE;
 
@@ -24,6 +25,8 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor {
     }
 
     @Override public Value visitVariable_dec(matrixoParser.Variable_decContext ctx) {
+        if (localMemory.getVariables().containsKey(ctx.IDENTIFIER().getText()))
+            throw new VariableAlreadyDefinedInScope(ctx.start.getLine(), ctx.IDENTIFIER().getText());
         if (ctx.variable_init() != null) {
             Value v = visitVariable_init(ctx.variable_init());
             if (v.getType().equalsIgnoreCase(ctx.type().getText())) {
@@ -121,9 +124,11 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor {
         matrixoExpressionVisitor EV = new matrixoExpressionVisitor(localMemory);
         Boolean evaluated = EV.visit(ctx.expression()).getBoolean();
 
+
         if (evaluated) {
-            visitStatement(ctx.statement());
-        }
+            return visitStatement(ctx.statement());
+        } else if (ctx.else_s() != null) return visitElse_s(ctx.else_s());
+
         return null;
     }
 
