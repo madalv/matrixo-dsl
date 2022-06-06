@@ -220,6 +220,16 @@ public class Matrix{
         return result;
     }
 
+    public static double[][] minor(Matrix A, int row, int column) {
+        double[][] minor = new double[A.getValue().size() - 1][A.getValue().size() - 1];
+
+        for (int i = 0; i < A.getValue().size(); i++)
+            for (int j = 0; i != row && j < A.getValue().get(i).size(); j++)
+                if (j != column)
+                    minor[i < row ? i : i - 1][j < column ? j : j - 1] = A.getValue().get(i).get(j);
+        return minor;
+    }
+
     @Override
     public String toString() {
         return  value.toString();
