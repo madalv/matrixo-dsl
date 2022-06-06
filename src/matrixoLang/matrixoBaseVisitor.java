@@ -5,6 +5,7 @@ import matrixoLang.Domain.Memory;
 import matrixoLang.Domain.Value;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 
 	public matrixoBaseVisitor() {
 		this.globalMemory = new Memory();
-		inbuiltFunctions = new ArrayList<>(List.of("print", "transpose", "gauss"));
+		inbuiltFunctions = new ArrayList<>(List.of("print", "transpose", "gauss", "rowsize", "colsize"));
 	}
 	/**
 	 * {@inheritDoc}
@@ -280,7 +281,7 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public Value visitImport_call(matrixoParser.Import_callContext ctx) { return visitChildren(ctx); }
+	@Override public Value visitImport_call(matrixoParser.Import_callContext ctx) throws IOException { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

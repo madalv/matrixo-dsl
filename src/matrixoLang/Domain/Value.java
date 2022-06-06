@@ -25,6 +25,11 @@ public class Value {
         type = t;
     }
 
+    public Value(Object v, String t) {
+        value = v;
+        type = t;
+    }
+
     public Value(Integer v, String t) {
         value = v;
         type = t;

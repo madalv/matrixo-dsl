@@ -8,6 +8,8 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.*;
 import org.antlr.v4.runtime.tree.*;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -1886,8 +1888,15 @@ public class matrixoParser extends Parser {
 		@Override public int getRuleIndex() { return RULE_import_call; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof matrixoVisitor ) return ((matrixoVisitor<? extends T>)visitor).visitImport_call(this);
+			if ( visitor instanceof matrixoVisitor ) {
+				try {
+					return ((matrixoVisitor<? extends T>)visitor).visitImport_call(this);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			else return visitor.visitChildren(this);
+			return visitor.visitChildren(this);
 		}
 	}
 

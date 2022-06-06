@@ -65,7 +65,7 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor {
                 Vector v = Matrix.GaussElimination(args.get(0).getMatrix(), args.get(1).getVector());
                 return new Value(v, Type.VECTOR.value);
             }
-            return null;
+            else throw new InbuiltGetFunctionException(ctx.start.getLine(), fnName);
         }
         else throw new CallNonDefinedFunctionException(fnName, ctx.start.getLine());
     }

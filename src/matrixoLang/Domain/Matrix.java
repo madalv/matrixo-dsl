@@ -5,6 +5,7 @@ import matrixoLang.Exceptions.ColumnsRowsMismatchException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class Matrix{
@@ -134,6 +135,7 @@ public class Matrix{
         return newMatrix;
     }
 
+    // Gauss Elimination, added
     public static Vector GaussElimination(Matrix A, Vector V) {
         ArrayList<Double> B = V.getValue();
         int N = B.size();
@@ -172,6 +174,28 @@ public class Matrix{
         Collections.addAll(s, solution);
         return new Vector(s);
     }
+
+    // do NOT change the name of this function pls, I need it like this for the reflection invoke!
+    public static Double rowsize(Matrix m) {
+        return (double) m.getValue().size();
+    }
+
+    // do NOT change the name of this function pls, I need it like this for the reflection invoke!
+    public static Double colsize(Matrix m) {
+        return (double) m.getValue().get(0).size();
+    }
+
+    public Boolean checkRowsEqual() {
+        int colSize = value.get(0).size();
+        AtomicBoolean res = new AtomicBoolean(true);
+        value.forEach(row -> {
+            if (row.size() != colSize) {
+                res.set(false);
+            }
+        });
+        return res.get();
+    }
+
 
     @Override
     public String toString() {

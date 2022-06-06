@@ -14,7 +14,8 @@ public class matrixoInterpreter {
         matrixoLexer lexer = new matrixoLexer(program);
         TokenStream tokens = new CommonTokenStream(lexer);
         matrixoParser parser = new matrixoParser(tokens);
-        parser.setErrorHandler(new BailErrorStrategy());
+        parser.removeErrorListeners();
+        parser.addErrorListener(ThrowingErrorListener.INSTANCE);
 
         try {
             ParseTree AST = parser.program();

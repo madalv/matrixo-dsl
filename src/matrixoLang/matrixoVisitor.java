@@ -4,6 +4,8 @@ package matrixoLang;
 
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
+import java.io.IOException;
+
 /**
  * This interface defines a complete generic visitor for a parse tree produced
  * by {@link matrixoParser}.
@@ -188,7 +190,7 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitImport_call(matrixoParser.Import_callContext ctx);
+	T visitImport_call(matrixoParser.Import_callContext ctx) throws IOException;
 	/**
 	 * Visit a parse tree produced by {@link matrixoParser#paranthesis_expr}.
 	 * @param ctx the parse tree

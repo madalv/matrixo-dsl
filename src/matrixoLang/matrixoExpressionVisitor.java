@@ -1,22 +1,31 @@
 package matrixoLang;
 
+
+import org.apache.poi.ss.*;
 import matrixoLang.Domain.*;
 import matrixoLang.Exceptions.*;
+import org.apache.poi.ss.formula.functions.T;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class matrixoExpressionVisitor extends matrixoBaseVisitor {
     private final Memory localMemory;
     public static final double SMALL_VALUE = 0.00000000001;
     public static final String COMMA_DELIMITER = ",";
+    private final HashMap<Class, String> returnTypes =new HashMap<>() {{
+        put(Matrix.class, Type.MATRIX.value);
+        put(Vector.class, Type.VECTOR.value);
+        put(Double.class, Type.DOUBLE.value);
+        put(Boolean.class, Type.BOOLEAN.value);
+    }};
 
     public matrixoExpressionVisitor(Memory localMemory) {
         super();
@@ -258,6 +267,7 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
         String fnName = ctx.IDENTIFIER(1).getText();
         Value var;
 
+
         if (localMemory.getVariables().containsKey(varName)) var = localMemory.getLocalVar(varName);
         else throw new AttemptToAccessNonDefinedVarException(varName, ctx.start.getLine());
 
@@ -267,17 +277,18 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
             try {
                 Matrix v = var.getMatrix();
                 Method getMethod = var.getMatrix().getClass().getDeclaredMethod(fnName, Matrix.class);
-                Matrix m = (Matrix) getMethod.invoke(v, v);
-                return new Value(m, Type.MATRIX.value);
+                Object m = getMethod.invoke(v, v);
+                return new Value(m, returnTypes.get(getMethod.getReturnType()));
             } catch (NoSuchMethodException e) {
                 System.out.println(e.getMessage());
             } catch (InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
-
         return null;
     }
+
+
 
     @Override public Value visitImport_call(matrixoParser.Import_callContext ctx) {
 
@@ -285,17 +296,25 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
         String ext = getFileExtension(filename);
         String type = ctx.MATRIX() != null ? Type.MATRIX.value : Type.VECTOR.value;
 
+
         switch (ext) {
             case "csv":
-                Matrix m = readMatrixFromCSV(filename);
+                Matrix m = readMatrixFromCSV(filename, ctx.start.getLine());
                 if (m.getValue().size() == 1 && type.equalsIgnoreCase(Type.VECTOR.value))
                     return new Value(new Vector(m.getValue().get(0)), Type.VECTOR.value);
                 else return new Value(m, Type.MATRIX.value);
             case "xlsx":
-                break;
-            default:
+                m = readMatrixFromExcel(filename, ctx.start.getLine());
+                assert m != null;
+                if (m.getValue().size() == 1 && type.equalsIgnoreCase(Type.VECTOR.value))
+                    return new Value(new Vector(m.getValue().get(0)), Type.VECTOR.value);
+                else if (m.getValue().size() > 1 && type.equalsIgnoreCase(Type.MATRIX.value))
+                    return new Value(m, Type.MATRIX.value);
+                else throw new ImportMismatchException(ctx.start.getLine(), type,
+                            m.getValue().size() > 1 ? Type.MATRIX.value : Type.VECTOR.value);
+
+            default: throw new UnsupportedFileException(ctx.start.getLine(), ext);
         }
-        return null;
     }
     @Override public Value visitFilename(matrixoParser.FilenameContext ctx) {
         String path = "";
@@ -304,9 +323,9 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
 
         return new Value(path + filename); }
 
-    private static Matrix readMatrixFromCSV(String filename) {
-        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
+    private static Matrix readMatrixFromCSV(String filename, int lineNr) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
             String line;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(COMMA_DELIMITER);
@@ -316,11 +335,40 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                 }
                 matrix.add(row);
             }
+            Matrix m = new Matrix(matrix);
+            if (!m.checkRowsEqual()) throw new RowNotOfEqualLengthException(lineNr);
+            return m;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    private static Matrix readMatrixFromExcel(String filename, int line) {
+        try {
+            FileInputStream file = new FileInputStream(filename);
+            Workbook workbook = new XSSFWorkbook(file);
+            Sheet sheet = workbook.getSheetAt(0);
+            ArrayList<ArrayList<Double>> data = new ArrayList<>();
+
+            for (Row row : sheet) {
+                ArrayList<Double> r = new ArrayList<>();
+                for (Cell cell : row) {
+                    if (cell.getCellType() == CellType.NUMERIC) {
+                        r.add(cell.getNumericCellValue());
+                    } else {
+                        throw new NonNumericValueException(line);
+                    }
+                }
+                data.add(r);
+            }
+            Matrix m = new Matrix(data);
+            if (!m.checkRowsEqual()) throw new RowNotOfEqualLengthException(line);
+            return m;
         } catch (IOException e) {
             System.out.println(e.getMessage());
+            return null;
         }
-
-        return new Matrix(matrix);
     }
 
     private static String getFileExtension(String fullName) {
