@@ -25,7 +25,9 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 
 	public matrixoBaseVisitor() {
 		this.globalMemory = new Memory();
-		inbuiltFunctions = new ArrayList<>(List.of("print", "transpose", "gauss", "rowsize", "colsize", "determinant"));
+		inbuiltFunctions = new ArrayList<>(List.of("print", "transpose", "gauss",
+				"rowsize", "colsize", "determinant", "eigenvecs", "eigenvals",
+				"Q", "R", "L", "U", "inverse", "minor", "rref"));
 	}
 	/**
 	 * {@inheritDoc}
@@ -211,7 +213,7 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public Value visitGetCall(matrixoParser.GetCallContext ctx) throws NoSuchMethodException { return visitChildren(ctx); }
+	@Override public Value visitGetCall(matrixoParser.GetCallContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -246,7 +248,7 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public Value visitGet_call(matrixoParser.Get_callContext ctx) throws NoSuchMethodException { return visitChildren(ctx); }
+	@Override public Value visitGet_call(matrixoParser.Get_callContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -281,7 +283,7 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public Value visitImport_call(matrixoParser.Import_callContext ctx) throws IOException { return visitChildren(ctx); }
+	@Override public Value visitImport_call(matrixoParser.Import_callContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

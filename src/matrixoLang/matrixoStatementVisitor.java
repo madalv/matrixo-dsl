@@ -58,7 +58,6 @@ public class matrixoStatementVisitor extends matrixoBaseVisitor {
             String type2 = assigned.getType().toLowerCase();
 
 
-            // TODO: implement other assignment ops than =
             if (val == null ||type2.equals(type1) && op.equals("=")) {
                 localMemory.getVariables().replace(varName, assigned);
             } else throw new AssignmentMismatchException(type1, type2, varName, ctx.start.getLine());

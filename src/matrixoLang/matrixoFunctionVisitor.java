@@ -55,7 +55,6 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor {
                 return returnValue;
             }
         }
-        // todo add inbuilt funcs
         else if (inbuiltFunctions.contains(fnName)) {
             ArrayList<Value> args = visitArgument_list(ctx.argument_list()).getArgList();
             if (fnName.equalsIgnoreCase("print")) {
@@ -64,6 +63,12 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor {
             } else if (fnName.equalsIgnoreCase("gauss")) {
                 Vector v = Matrix.GaussElimination(args.get(0).getMatrix(), args.get(1).getVector());
                 return new Value(v, Type.VECTOR.value);
+            } else if (fnName.equalsIgnoreCase("minor")) {
+                Matrix m = args.get(0).getMatrix();
+                Double d1 = args.get(1).getDouble();
+                Double d2 = args.get(2).getDouble();
+                Matrix res = Matrix.minor(m, d1, d2);
+                return new Value(res, Type.MATRIX.value);
             }
             else throw new InbuiltGetFunctionException(ctx.start.getLine(), fnName);
         }

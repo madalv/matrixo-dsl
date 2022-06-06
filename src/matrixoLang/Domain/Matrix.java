@@ -7,6 +7,9 @@ import matrixoLang.Exceptions.DeterminantUnevenMatrixException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import Jama.EigenvalueDecomposition;
+import Jama.QRDecomposition;
+import Jama.LUDecomposition;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -283,9 +286,241 @@ public class Matrix{
         return res.get();
     }
 
+    // added
+    public static Matrix eigenvecs(Matrix m) {
+        ArrayList<ArrayList<Double>>  mainList = m.getValue();
+        double[][] doubleArray = mainList.stream().map(  u  ->  u.stream().mapToDouble(i->i).toArray()).toArray(double[][]::new);
 
-    @Override
-    public String toString() {
+        Jama.Matrix jaMatrix = new Jama.Matrix(doubleArray);
+        EigenvalueDecomposition ev = new EigenvalueDecomposition(jaMatrix);
+        double[][] result = ev.getV().getArray();
+
+        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
+        for (double[] row: result) {
+            ArrayList<Double> r = new ArrayList<>();
+            for (double d : row) r.add(d);
+            matrix.add(r);
+        }
+        return new Matrix(matrix);
+    }
+
+    // added
+    public static Matrix eigenvals(Matrix m) {
+        ArrayList<ArrayList<Double>>  mainList = m.getValue();
+        double[][] doubleArray = mainList.stream().map(  u  ->  u.stream().mapToDouble(i->i).toArray()).toArray(double[][]::new);
+
+        Jama.Matrix jaMatrix = new Jama.Matrix(doubleArray);
+        EigenvalueDecomposition ev = new EigenvalueDecomposition(jaMatrix);
+        double[][] result = ev.getD().getArray();
+
+        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
+        for (double[] row: result) {
+            ArrayList<Double> r = new ArrayList<>();
+            for (double d : row) r.add(d);
+            matrix.add(r);
+        }
+        return new Matrix(matrix);
+    }
+
+    // added
+    public static Matrix Q(Matrix m) {
+        ArrayList<ArrayList<Double>>  mainList = m.getValue();
+        double[][] doubleArray = mainList.stream().map(  u  ->  u.stream().mapToDouble(i->i).toArray()).toArray(double[][]::new);
+
+        Jama.Matrix jaMatrix = new Jama.Matrix(doubleArray);
+        QRDecomposition qr = new QRDecomposition(jaMatrix);
+        double[][] result = qr.getQ().getArray();
+
+        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
+        for (double[] row: result) {
+            ArrayList<Double> r = new ArrayList<>();
+            for (double d : row) r.add(d);
+            matrix.add(r);
+        }
+        return new Matrix(matrix);
+    }
+
+    // added
+    public static Matrix R(Matrix m) {
+        ArrayList<ArrayList<Double>>  mainList = m.getValue();
+        double[][] doubleArray = mainList.stream().map(  u  ->  u.stream().mapToDouble(i->i).toArray()).toArray(double[][]::new);
+
+        Jama.Matrix jaMatrix = new Jama.Matrix(doubleArray);
+        QRDecomposition qr = new QRDecomposition(jaMatrix);
+        double[][] result = qr.getR().getArray();
+
+        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
+        for (double[] row: result) {
+            ArrayList<Double> r = new ArrayList<>();
+            for (double d : row) r.add(d);
+            matrix.add(r);
+        }
+        return new Matrix(matrix);
+    }
+
+    // added
+    public static Matrix U(Matrix m) {
+        ArrayList<ArrayList<Double>>  mainList = m.getValue();
+        double[][] doubleArray = mainList.stream().map(  u  ->  u.stream().mapToDouble(i->i).toArray()).toArray(double[][]::new);
+
+        Jama.Matrix jaMatrix = new Jama.Matrix(doubleArray);
+        LUDecomposition lu = new LUDecomposition(jaMatrix);
+        double[][] result = lu.getU().getArray();
+
+        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
+        for (double[] row: result) {
+            ArrayList<Double> r = new ArrayList<>();
+            for (double d : row) r.add(d);
+            matrix.add(r);
+        }
+        return new Matrix(matrix);
+    }
+
+    // added
+    public static Matrix L(Matrix m) {
+        ArrayList<ArrayList<Double>>  mainList = m.getValue();
+        double[][] doubleArray = mainList.stream().map(  u  ->  u.stream().mapToDouble(i->i).toArray()).toArray(double[][]::new);
+
+        Jama.Matrix jaMatrix = new Jama.Matrix(doubleArray);
+        LUDecomposition lu = new LUDecomposition(jaMatrix);
+        double[][] result = lu.getL().getArray();
+
+        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
+        for (double[] row: result) {
+            ArrayList<Double> r = new ArrayList<>();
+            for (double d : row) r.add(d);
+            matrix.add(r);
+        }
+        return new Matrix(matrix);
+    }
+
+    // added
+    public static Matrix inverse(Matrix A) {
+        int N = A.getValue().size();
+        // Find determinant of A[][]
+        double det = determinantOfMatrix(A, N);
+        if (det == 0)
+        {
+            System.out.print("Singular matrix, can't find its inverse");
+        }
+
+        // Find adjoint
+        Matrix adj = new Matrix();
+
+        for (int i = 0; i < N; i++) {
+            ArrayList<Double> row = new ArrayList<>(Collections.nCopies(N, 0.0));
+            adj.add(row);
+        }
+        adjoint(A, adj);
+
+        // Find Inverse using formula "inverse(A) = adj(A)/det(A)"
+        Matrix inverse = new Matrix();
+        for (int i = 0; i < N; i++) {
+            ArrayList<Double> row = new ArrayList<>(Collections.nCopies(N, 0.0));
+            inverse.add(row);
+        }
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+                inverse.getValue().get(i).set(j, adj.getValue().get(i).get(j) / (float)det);
+
+        return inverse;
+    }
+
+    // Function to get adjoint of A[N][N] in adj[N][N].
+    private static void adjoint(Matrix A, Matrix adj) {
+        int N = A.getValue().size();
+
+        for (int i = 0; i < N; i++) {
+            ArrayList<Double> row = new ArrayList<>(Collections.nCopies(N, 0.0));
+            adj.add(row);
+        }
+
+        if (N == 1) {
+            adj.getValue().get(0).set(0, 1.0);
+            return;
+        }
+
+        int sign = 1;
+
+        Matrix temp = new Matrix();
+
+        for (int i = 0; i < N; i++) {
+            ArrayList<Double> row = new ArrayList<>(Collections.nCopies(N, 0.0));
+            temp.add(row);
+        }
+
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                // Get cofactor of A[i][j]
+                getCofactor(A, temp, i, j, N);
+
+                // sign of adj[j][i] positive if sum of row
+                // and column indexes is even.
+                sign = ((i + j) % 2 == 0)? 1: -1;
+
+                // Interchanging rows and columns to get the
+                // transpose of the cofactor matrix
+                adj.getValue().get(j).set(i, (sign)*(determinantOfMatrix(temp, N-1)));
+            }
+        }
+    }
+
+    // added
+    public static Matrix minor(Matrix A, Double row, Double column) {
+        Double[][] minor = new Double[A.getValue().size() - 1][A.getValue().size() - 1];
+
+        for (int i = 0; i < A.getValue().size(); i++)
+            for (int j = 0; i != row && j < A.getValue().get(i).size(); j++)
+                if (j != column)
+                    minor[i < row ? i : i - 1][j < column ? j : j - 1] = A.getValue().get(i).get(j);
+
+        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
+        for (Double[] r: minor) matrix.add(new ArrayList<>(Arrays.asList(r)));
+        return new Matrix(matrix);
+    }
+
+    // added
+    public static Matrix rref(Matrix A) {
+
+        Double[][] matrix = A.getValue().stream().map(u -> u.toArray(new Double[0])).toArray(Double[][]::new);
+        Double[][] rref = new Double[matrix.length][];
+        for (int i = 0; i < matrix.length; i++)
+            rref[i] = Arrays.copyOf(matrix[i], matrix[i].length);
+
+        int r = 0;
+        for (int c = 0; c < rref[0].length && r < rref.length; c++) {
+            int j = r;
+            for (int i = r + 1; i < rref.length; i++)
+                if (Math.abs(rref[i][c]) > Math.abs(rref[j][c]))
+                    j = i;
+            if (Math.abs(rref[j][c]) < 0.00001)
+                continue;
+
+            Double[] temp = rref[j];
+            rref[j] = rref[r];
+            rref[r] = temp;
+
+            double s = 1.0 / rref[r][c];
+            for (j = 0; j < rref[0].length; j++)
+                rref[r][j] *= s;
+            for (int i = 0; i < rref.length; i++) {
+                if (i != r) {
+                    double t = rref[i][c];
+                    for (j = 0; j < rref[0].length; j++)
+                        rref[i][j] -= t * rref[r][j];
+                }
+            }
+            r++;
+        }
+
+        ArrayList<ArrayList<Double>> mx = new ArrayList<>();
+        for (Double[] row: rref) mx.add(new ArrayList<>(Arrays.asList(row)));
+        return new Matrix(mx);
+    }
+
+    @Override public String toString() {
         return  value.stream().map(r -> r.stream().map(String::valueOf).collect(Collectors.joining(" ", "", ",\n")))
                 .collect(Collectors.joining("", "( \n", ")")).replaceFirst(",\n\\)", "\n)");
     }

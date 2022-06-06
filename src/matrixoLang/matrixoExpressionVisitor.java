@@ -125,7 +125,9 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                         return new Value(result, Type.MATRIX.value);
                     }
                     if (type1.equals(Type.VECTOR.value)) {
-                        //todo vector * vector (dot product)
+                        if (v1.getVector().getValue().size() != v2.getVector().getValue().size())
+                            throw new VectorSizeMismatchException(ctx.start.getLine());
+                        else return new Value(Vector.DotProduct(v1.getVector(), v2.getVector()), Type.VECTOR.value);
                     }
                     if (type1.equals(Type.DOUBLE.value)) {
                         return new Value(v1.getDouble() * v2.getDouble(), Type.DOUBLE.value);
@@ -138,7 +140,7 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                     if (cols != rows) throw new ColumnsRowsMismatchException(ctx.start.getLine(), cols, rows);
                     return new Value(Matrix.VectorMultiplication(v1.getMatrix(), v2.getVector()), Type.MATRIX.value);
                 } else if (type1.equals(Type.VECTOR.value) && type2.equals(Type.DOUBLE.value)) {
-                    //todo vector * scalar
+                    return new Value(Vector.MultiplyScalar(v1.getVector(), v2.getDouble()), Type.VECTOR.value);
                 }
                 else throw new IllegalOperationException(new ArrayList<>(List.of(v1, v2)), ctx.start.getLine(), ctx.FIRST_ORDER_OP().getText());
                 break;
@@ -148,10 +150,9 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                  else if (type1.equals(Type.MATRIX.value) && type2.equals(Type.DOUBLE.value)) {
                     return new Value(Matrix.MultiplicationScalar(v1.getMatrix(), 1/v2.getDouble()), Type.MATRIX.value);
                 } else if (type1.equals(Type.VECTOR.value) && type2.equals(Type.DOUBLE.value)){
-                    //todo vector / scalar
+                    return new Value(Vector.MultiplyScalar(v1.getVector(), 1/v2.getDouble()), Type.VECTOR.value);
                 }
                 else throw new IllegalOperationException(new ArrayList<>(List.of(v1, v2)), ctx.start.getLine(), ctx.FIRST_ORDER_OP().getText());
-                break;
             case "%":
                 if (type1.equals(type2) && type1.equals(Type.DOUBLE.value))
                     return new Value(v1.getDouble() % v2.getDouble(), Type.DOUBLE.value);
@@ -175,7 +176,9 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                         return new Value(Matrix.Addition(v1.getMatrix(), v2.getMatrix()), Type.MATRIX.value);
                     }
                     if (type1.equals(Type.VECTOR.value)) {
-                        //todo vector + vector
+                        if (v1.getVector().getValue().size() != v2.getVector().getValue().size())
+                            throw new VectorSizeMismatchException(ctx.start.getLine());
+                        else return new Value(Vector.Add(v1.getVector(), v2.getVector()), Type.VECTOR.value);
                     }
                     if (type1.equals(Type.DOUBLE.value)) {
                         return new Value(v1.getDouble() + v2.getDouble(), Type.DOUBLE.value);
@@ -183,7 +186,7 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                 } else if (type1.equals(Type.MATRIX.value) && type2.equals(Type.DOUBLE.value)) {
                     return new Value(Matrix.AdditionScalar(v1.getMatrix(), v2.getDouble()), Type.MATRIX.value);
                 } else if (type1.equals(Type.VECTOR.value) && type2.equals(Type.DOUBLE.value)) {
-                    //todo vector + scalar
+                    return new Value(Vector.AddScalar(v1.getVector(), v2.getDouble()), Type.VECTOR.value);
                 }
                 else throw new IllegalOperationException(new ArrayList<>(List.of(v1, v2)), ctx.start.getLine(), ctx.SECOND_ORDER_OP().getText());
                 break;
@@ -193,7 +196,9 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                         return new Value(Matrix.Subtraction(v1.getMatrix(), v2.getMatrix()), Type.MATRIX.value);
                     }
                     if (type1.equals(Type.VECTOR.value)) {
-                        //todo vector - vector
+                        if (v1.getVector().getValue().size() != v2.getVector().getValue().size())
+                            throw new VectorSizeMismatchException(ctx.start.getLine());
+                        else return new Value(Vector.Subtract(v1.getVector(), v2.getVector()), Type.VECTOR.value);
                     }
                     if (type1.equals(Type.DOUBLE.value)) {
                         return new Value(v1.getDouble() - v2.getDouble(), Type.DOUBLE.value);
@@ -201,7 +206,7 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                 } else if (type1.equals(Type.MATRIX.value) && type2.equals(Type.DOUBLE.value)) {
                     return new Value(Matrix.AdditionScalar(v1.getMatrix(), -v2.getDouble()), Type.MATRIX.value);
                 } else if (type1.equals(Type.VECTOR.value) && type2.equals(Type.DOUBLE.value)) {
-                    //todo vector - scalar
+                    return new Value(Vector.AddScalar(v1.getVector(), -v2.getDouble()), Type.VECTOR.value);
                 }
                 else throw new IllegalOperationException(new ArrayList<>(List.of(v1, v2)), ctx.start.getLine(), ctx.SECOND_ORDER_OP().getText());
                 break;
@@ -261,9 +266,9 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
 
     @Override public Value visitImportCall(matrixoParser.ImportCallContext ctx) { return visitImport_call(ctx.import_call()); }
 
-    @Override public Value visitGetCall(matrixoParser.GetCallContext ctx) throws NoSuchMethodException { return visitGet_call(ctx.get_call()); }
+    @Override public Value visitGetCall(matrixoParser.GetCallContext ctx) { return visitGet_call(ctx.get_call()); }
 
-    @Override public Value visitGet_call(matrixoParser.Get_callContext ctx) throws NoSuchMethodException {
+    @Override public Value visitGet_call(matrixoParser.Get_callContext ctx) {
         String varName = ctx.IDENTIFIER(0).getText();
         String fnName = ctx.IDENTIFIER(1).getText();
         Value var;
@@ -280,7 +285,7 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                 Method getMethod = var.getMatrix().getClass().getDeclaredMethod(fnName, Matrix.class);
                 Object m = getMethod.invoke(v, v);
                 return new Value(m, returnTypes.get(getMethod.getReturnType()));
-            } catch (DeterminantUnevenMatrixException | IllegalAccessException | InvocationTargetException e) {
+            } catch (DeterminantUnevenMatrixException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 System.err.println(e.getCause());
                 System.exit(-1);
             }

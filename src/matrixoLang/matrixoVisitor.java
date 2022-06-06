@@ -1,10 +1,7 @@
 // Generated from C:/Users/Vlada/Downloads/pbl-sem-4/matrixoLang/src/matrixoLang\matrixo.g4 by ANTLR 4.9.2
 package matrixoLang;
 
-
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
-
-import java.io.IOException;
 
 /**
  * This interface defines a complete generic visitor for a parse tree produced
@@ -128,26 +125,75 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitType(matrixoParser.TypeContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code boolOp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitBoolOp(matrixoParser.BoolOpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code atomExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitAtomExp(matrixoParser.AtomExpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code sqrtExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitSqrtExp(matrixoParser.SqrtExpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code prefixExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitPrefixExp(matrixoParser.PrefixExpContext ctx);
-
-
+	/**
+	 * Visit a parse tree produced by the {@code powerExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitPowerExp(matrixoParser.PowerExpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code importCall}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitImportCall(matrixoParser.ImportCallContext ctx);
-
-	T visitGetCall(matrixoParser.GetCallContext ctx) throws NoSuchMethodException;
-
+	/**
+	 * Visit a parse tree produced by the {@code getCall}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitGetCall(matrixoParser.GetCallContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code firstOrdExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitFirstOrdExp(matrixoParser.FirstOrdExpContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code matrixInit}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitMatrixInit(matrixoParser.MatrixInitContext ctx);
-
+	/**
+	 * Visit a parse tree produced by the {@code secondOrdExp}
+	 * labeled alternative in {@link matrixoParser#expression}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
 	T visitSecondOrdExp(matrixoParser.SecondOrdExpContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link matrixoParser#atom}.
@@ -160,7 +206,7 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGet_call(matrixoParser.Get_callContext ctx) throws NoSuchMethodException;
+	T visitGet_call(matrixoParser.Get_callContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link matrixoParser#matrix_init}.
 	 * @param ctx the parse tree
@@ -190,7 +236,7 @@ public interface matrixoVisitor<T> extends ParseTreeVisitor<T> {
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitImport_call(matrixoParser.Import_callContext ctx) throws IOException;
+	T visitImport_call(matrixoParser.Import_callContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link matrixoParser#paranthesis_expr}.
 	 * @param ctx the parse tree
