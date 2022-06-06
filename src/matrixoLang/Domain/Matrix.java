@@ -44,6 +44,67 @@ public class Matrix{
         return newMatrix.getValue();
     }
 
+    // Subtraction
+    public static ArrayList<ArrayList<Double>> Subtraction(Matrix first_value, Matrix second_value) {
+        int first_dim = first_value.getValue().size();
+        int second_dim = first_value.getValue().get(0).size();
+
+        Matrix newMatrix = new Matrix();
+
+        for (int i = 0; i < first_dim; i++) {
+            ArrayList<Double> row = new ArrayList<>();
+            for (int j = 0; j < second_dim; j++) {
+                row.add(first_value.getValue().get(i).get(j) - second_value.getValue().get(i).get(j));
+            }
+            newMatrix.add(row);
+        }
+
+        return newMatrix.getValue();
+    }
+
+    static void getCofactor(Matrix mat, Matrix temp,
+                            int p, int q, int n)
+    {
+        int i = 0, j = 0;
+
+        for (int row = 0; row < n; row++) {
+            for (int col = 0; col < n; col++) {
+                if (row != p && col != q) {
+                    temp.getValue().get(i).set(j++, mat.getValue().get(row).get(col));
+                    if (j == n - 1) {
+                        j = 0;
+                        i++;
+                    }
+                }
+            }
+        }
+    }
+
+    static double determinantOfMatrix(Matrix first_value, int n) {
+        int first_dim = first_value.getValue().size();
+        int D = 0;
+
+        if (n == 1)
+            return first_value.getValue().get(0).get(0);
+
+        Matrix temp = new Matrix();
+
+        for (int i = 0; i < first_dim; i++) {
+            ArrayList<Double> row = new ArrayList<>(Collections.nCopies(first_dim, 0.0));
+            temp.add(row);
+        }
+
+        int sign = 1;
+
+        for (int f = 0; f < n; f++) {
+            getCofactor(first_value, temp, 0, f, n);
+            D += sign * first_value.getValue().get(0).get(f) * determinantOfMatrix(temp, n - 1);
+
+            sign = -sign;
+        }
+        return D;
+    }
+
     // Multiplication
     public static ArrayList<ArrayList<Double>> Multiplication(Matrix first_value, double scalar) {
         int first_dim = first_value.getValue().size();
