@@ -1,11 +1,7 @@
-package matrixoLang.Domain;
-
-
-import matrixoLang.Exceptions.ColumnsRowsMismatchException;
+package uwu;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.stream.Collectors;
 
 public class Matrix{
     private ArrayList<ArrayList<Double>> value;
@@ -30,8 +26,8 @@ public class Matrix{
         this.value = value;
     }
 
-    // Addition, added
-    public static Matrix Addition(Matrix first_value, Matrix second_value) {
+    // Addition
+    public static ArrayList<ArrayList<Double>> Addition(Matrix first_value, Matrix second_value) {
         int first_dim = first_value.getValue().size();
         int second_dim = first_value.getValue().get(0).size();
 
@@ -44,28 +40,12 @@ public class Matrix{
             }
             newMatrix.add(row);
         }
-        return newMatrix;
+
+        return newMatrix.getValue();
     }
 
-    // Subtraction, added
-    public static Matrix Subtraction(Matrix first_value, Matrix second_value) {
-        int first_dim = first_value.getValue().size();
-        int second_dim = first_value.getValue().get(0).size();
-
-        Matrix newMatrix = new Matrix();
-
-        for (int i = 0; i < first_dim; i++) {
-            ArrayList<Double> row = new ArrayList<>();
-            for (int j = 0; j < second_dim; j++) {
-                row.add(first_value.getValue().get(i).get(j) - second_value.getValue().get(i).get(j));
-            }
-            newMatrix.add(row);
-        }
-        return newMatrix;
-    }
-
-    // Multiplication by scalar, added
-    public static Matrix MultiplicationScalar(Matrix first_value, Double scalar) {
+    // Multiplication
+    public static ArrayList<ArrayList<Double>> Multiplication(Matrix first_value, double scalar) {
         int first_dim = first_value.getValue().size();
         int second_dim = first_value.getValue().get(0).size();
 
@@ -79,29 +59,11 @@ public class Matrix{
             newMatrix.add(row);
         }
 
-        return newMatrix;
+        return newMatrix.getValue();
     }
 
-    // Addition with scalar, added
-    public static Matrix AdditionScalar(Matrix first_value, Double scalar) {
-        int first_dim = first_value.getValue().size();
-        int second_dim = first_value.getValue().get(0).size();
-
-        Matrix newMatrix = new Matrix();
-
-        for (int i = 0; i < first_dim; i++) {
-            ArrayList<Double> row = new ArrayList<>();
-            for (int j = 0; j < second_dim; j++) {
-                row.add(first_value.getValue().get(i).get(j) + scalar);
-            }
-            newMatrix.add(row);
-        }
-
-        return newMatrix;
-    }
-
-    // Vector multiplication, added
-    public static Vector VectorMultiplication(Matrix first_value, Vector vector) {
+    // Vector multiplication
+    public static ArrayList<Double> VectorMultiplication(Matrix first_value, ArrayList<Double> vector) {
         int first_dim = first_value.getValue().size();
         int second_dim = first_value.getValue().get(0).size();
 
@@ -109,15 +71,13 @@ public class Matrix{
 
         for (int i = 0; i < first_dim; i++) {
             for (int j = 0; j < second_dim; j++) {
-                row.set(i, row.get(i) + (vector.getValue().get(i) * first_value.getValue().get(i).get(j)));
+                row.set(i, row.get(i) + (vector.get(i) * first_value.getValue().get(i).get(j)));
             }
         }
-        return new Vector(row);
+        return row;
     }
 
-    // Matrix transpose, added to get call
-    // do NOT change the name of this function pls, I need it like this for the reflection invoke!
-    public static Matrix transpose(Matrix first_value) {
+    public static ArrayList<ArrayList<Double>> Transpose(Matrix first_value) {
         int first_dim = first_value.getValue().size();
         int second_dim = first_value.getValue().get(0).size();
 
@@ -131,62 +91,48 @@ public class Matrix{
             newMatrix.add(row);
         }
 
-        return newMatrix;
+        return newMatrix.getValue();
     }
 
-//    public static ArrayList<Double> GaussElimination (Matrix first_value) {
-//        int first_dim = first_value.getValue().size();
-//        int second_dim = first_value.getValue().get(0).size();
-//
-//        Matrix newMatrix = new Matrix();
-//        ArrayList<ArrayList<Double>> newList = new ArrayList<>(first_value.getValue());
-//
-//        for (int i = 0; i < first_dim; i++) {
-//            for (int j = 0; j < first_dim; j++) {
-//                if (i != j) {
-//                    double b = newList.get(j).get(i) / newList.get(i).get(i);
-//                    for (int k = 0; k < first_dim + 1; k++) {
-//                        newList.get(j).set(k, newList.get(j).get(k) - b * newList.get(i).get(k));
-//                    }
-//                }
-//            }
-//        }
-//
-//
-//        ArrayList<Double> row = new ArrayList<>();
-//
-//        for (int i = 0; i < first_dim; i++) {
-//            row.add(newList.get(i).get(second_dim + 1) / newList.get(i).get(i));
-//        }
-//
-//        return row;
-//    }
+    public static double[] GaussElimination(Matrix A, ArrayList<Double> B) {
+        int N = B.size();
 
-//    public ArrayList<Double> Eigenvalues(Matrix first_value) {
-//        int first_dim = first_value.getValue().size();
-//        int second_dim = first_value.getValue().get(0).size();
-//
-//        ArrayList<Double> eigenvalues = new ArrayList<>();
-//
-//        if (first_dim == 2) {
-//            double b = -1 * (first_value.getValue().get(0).get(0) + first_value.getValue().get(1).get(1));
-//            double c = first_value.getValue().get(0).get(0) * first_value.getValue().get(1).get(1) - first_value.getValue().get(1).get(0) * first_value.getValue().get(0).get(1);
-//            eigenvalues.addAll(Operations.quadraticSolver(1, b, c));
-//        } else if (getNumRows() == 3) {
-//            long trace = (long) Operations.trace(this);
-//            long determinant = (long) determinant(matrix, (int) getNumRows());
-//            long squaresTrace = (long) Operations.trace(squareTheMatrix());
-//
-//
-//            //now use the characteristic polynomial to solve for the eigenvalues
-//        }
-//        return eigenvalues;
-//    }
+        for (int k = 0; k < N; k++) {
+            int max = k;
+            for (int i = k + 1; i < N; i++)
+                if (Math.abs(A.getValue().get(i).get(k)) > Math.abs(A.getValue().get(max).get(k)))
+                    max = i;
+
+            ArrayList<Double> temp = A.getValue().get(k);
+            A.getValue().set(k, A.getValue().get(max));
+            A.getValue().set(max, temp);
+
+            double t = B.get(k);
+            B.set(k, B.get(max));
+            B.set(max, t);
+
+            for (int i = k + 1; i < N; i++) {
+                double factor = A.getValue().get(i).get(k) / A.getValue().get(k).get(k);
+                B.set(i, B.get(i) - factor * B.get(k));
+                for (int j = k; j < N; j++)
+                    A.getValue().get(i).set(j, A.getValue().get(i).get(j) - factor * A.getValue().get(k).get(j));
+            }
+        }
+
+        double[] solution = new double[N];
+        for (int i = N - 1; i >= 0; i--) {
+            double sum = 0.0;
+            for (int j = i + 1; j < N; j++)
+                sum += A.getValue().get(i).get(j) * solution[j];
+            solution[i] = (B.get(i) - sum) / A.getValue().get(i).get(i);
+        }
+
+        return solution;
+    }
 
     @Override
     public String toString() {
-        return  value.stream().map(r -> r.stream().map(String::valueOf).collect(Collectors.joining(" ", "", ",\n")))
-                .collect(Collectors.joining("", "( \n", ")")).replaceFirst(",\n\\)", "\n)");
+        return  value.toString();
     }
 
 }
