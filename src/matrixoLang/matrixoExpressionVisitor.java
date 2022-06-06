@@ -3,14 +3,20 @@ package matrixoLang;
 import matrixoLang.Domain.*;
 import matrixoLang.Exceptions.*;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class matrixoExpressionVisitor extends matrixoBaseVisitor {
     private final Memory localMemory;
     public static final double SMALL_VALUE = 0.00000000001;
+    public static final String COMMA_DELIMITER = ",";
 
     public matrixoExpressionVisitor(Memory localMemory) {
         super();
@@ -94,7 +100,6 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
             throw new IllegalOperationException(new ArrayList<>(List.of(base)), ctx.start.getLine(), "** (power)");
         return new Value(Math.pow(base.getDouble(), exp.getDouble()), Type.DOUBLE.value);
     }
-
 
     @Override public Value visitFirstOrdExp(matrixoParser.FirstOrdExpContext ctx) {
         Value v1 = this.visit(ctx.expression(0));
@@ -196,6 +201,8 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
         return null;
     }
 
+    @Override public Value visitParanthesis_expr(matrixoParser.Paranthesis_exprContext ctx) { return this.visit(ctx.expression()); }
+
     @Override public Value visitAtom(matrixoParser.AtomContext ctx) {
         if (ctx.IDENTIFIER() != null) {
             if (localMemory.getVariables().containsKey(ctx.IDENTIFIER().getText())) return localMemory.getLocalVar(ctx.IDENTIFIER().getText());
@@ -272,7 +279,52 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
         return null;
     }
 
-    @Override public Value visitImport_call(matrixoParser.Import_callContext ctx) { return visitChildren(ctx); }
+    @Override public Value visitImport_call(matrixoParser.Import_callContext ctx) {
 
-    @Override public Value visitParanthesis_expr(matrixoParser.Paranthesis_exprContext ctx) { return this.visit(ctx.expression()); }
+        String filename = visitFilename(ctx.filename()).getString();
+        String ext = getFileExtension(filename);
+        String type = ctx.MATRIX() != null ? Type.MATRIX.value : Type.VECTOR.value;
+
+        switch (ext) {
+            case "csv":
+                Matrix m = readMatrixFromCSV(filename);
+                if (m.getValue().size() == 1 && type.equalsIgnoreCase(Type.VECTOR.value))
+                    return new Value(new Vector(m.getValue().get(0)), Type.VECTOR.value);
+                else return new Value(m, Type.MATRIX.value);
+            case "xlsx":
+                break;
+            default:
+        }
+        return null;
+    }
+    @Override public Value visitFilename(matrixoParser.FilenameContext ctx) {
+        String path = "";
+        if (ctx.PATH() != null) path = ctx.PATH().getText();
+        String filename = ctx.NAME().getText();
+
+        return new Value(path + filename); }
+
+    private static Matrix readMatrixFromCSV(String filename) {
+        ArrayList<ArrayList<Double>> matrix = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] values = line.split(COMMA_DELIMITER);
+                ArrayList<Double> row = new ArrayList<>();
+                for (String v : values) {
+                    row.add(Double.parseDouble(v));
+                }
+                matrix.add(row);
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return new Matrix(matrix);
+    }
+
+    private static String getFileExtension(String fullName) {
+        int dotIndex = fullName.lastIndexOf('.');
+        return (dotIndex == -1) ? "" : fullName.substring(dotIndex + 1);
+    }
 }

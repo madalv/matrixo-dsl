@@ -33,3 +33,29 @@ fun f1 (double x) ret void {
 //double d += ++4.7 + --56.12 + 15 + %%6**(1+1) + e;
 //print(d);
 //d = get mx1 determinant;
+
+matrix mx1 = (
+1 223.4,
+323 4,
+2 3
+);
+
+print(mx1, v);
+
+fun f1 (double d, matrix m) ret vector {
+
+double mo = 3;
+double i = 4.0;
+
+    if (mo != i) {
+        mo = mo - 1;
+    } else if (mo >= i + 3 * 5 ** 2 + %%(2 + 3.3) + 4.4) {
+        mo = mo + 1;
+         }
+
+    vector v = (1 2.4);
+    return v;
+}
+
+v = f1(1.2, m1);
+print(v);

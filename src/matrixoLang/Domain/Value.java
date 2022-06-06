@@ -40,6 +40,10 @@ public class Value {
         type = t;
     }
 
+    public Value(String s) {
+        value = s;
+    }
+
 
     public Value(ArrayList<?> v) {
         value = v;
@@ -55,7 +59,6 @@ public class Value {
         return (ArrayList<Parameter>) value;
     }
 
-    //todo add error handling
     public Matrix getMatrix() {
         if (value instanceof Matrix) {
             return (Matrix) value;
@@ -72,7 +75,6 @@ public class Value {
 
     public Boolean getBoolean() {return (Boolean) value;}
 
-    public Integer getInteger() { return (Integer) value; }
 
     public String getString() {
         return (String) value;

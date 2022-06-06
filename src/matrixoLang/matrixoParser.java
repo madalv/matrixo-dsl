@@ -2,6 +2,7 @@
 package matrixoLang;
 
 
+
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -21,11 +22,11 @@ public class matrixoParser extends Parser {
 	public static final int
 		RETURN=1, FOR=2, L_PAR=3, R_PAR=4, SEMICOL=5, ELSE=6, IF=7, L_BRAK=8, 
 		L_SQBRAK=9, R_SQBRAK=10, R_BRAK=11, WHILE=12, COMMENT=13, VOID=14, FUNCTION=15, 
-		RETURNS=16, BOOL_TYPE=17, INT_TYPE=18, TRUE=19, FALSE=20, DOUBLE_TYPE=21, 
-		MATRIX=22, VECTOR=23, BREAK=24, POWER=25, SQRT=26, PREFIX_OP=27, SECOND_ORDER_OP=28, 
-		FIRST_ORDER_OP=29, BOOL_OP=30, ASSIGN_OP=31, COMMA=32, DOT=33, NUMBER=34, 
-		GET=35, IMPORT=36, FILE_TYPE=37, SPACE=38, FROM=39, TO=40, IDENTIFIER=41, 
-		NAME=42, PATH=43;
+		RETURNS=16, BOOL_TYPE=17, TRUE=18, FALSE=19, DOUBLE_TYPE=20, MATRIX=21, 
+		VECTOR=22, BREAK=23, POWER=24, SQRT=25, PREFIX_OP=26, SECOND_ORDER_OP=27, 
+		FIRST_ORDER_OP=28, BOOL_OP=29, ASSIGN_OP=30, COMMA=31, DOT=32, NUMBER=33, 
+		GET=34, IMPORT=35, FILE_TYPE=36, SPACE=37, FROM=38, TO=39, IDENTIFIER=40, 
+		NAME=41, PATH=42;
 	public static final int
 		RULE_program = 0, RULE_statement = 1, RULE_nosemicolon_s = 2, RULE_semicolon_s = 3, 
 		RULE_return_s = 4, RULE_ctrlflow_s = 5, RULE_for_s = 6, RULE_if_s = 7, 
@@ -49,10 +50,10 @@ public class matrixoParser extends Parser {
 	private static String[] makeLiteralNames() {
 		return new String[] {
 			null, "'return'", "'for'", "'('", "')'", "';'", "'else'", "'if'", "'{'", 
-			"'['", "']'", "'}'", "'while'", null, "'void'", null, null, "'bool'", 
-			"'int'", "'true'", "'false'", "'double'", "'matrix'", "'vector'", "'break'", 
-			"'**'", "'%%'", null, null, null, null, null, "','", "'.'", null, "'get'", 
-			null, null, null, "'from'", "'to'"
+			"'['", "']'", "'}'", "'while'", null, "'void'", null, null, "'boolean'", 
+			"'true'", "'false'", "'double'", "'matrix'", "'vector'", "'break'", "'**'", 
+			"'%%'", null, null, null, null, null, "','", "'.'", null, "'get'", null, 
+			null, null, "'from'", "'to'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
@@ -60,8 +61,8 @@ public class matrixoParser extends Parser {
 		return new String[] {
 			null, "RETURN", "FOR", "L_PAR", "R_PAR", "SEMICOL", "ELSE", "IF", "L_BRAK", 
 			"L_SQBRAK", "R_SQBRAK", "R_BRAK", "WHILE", "COMMENT", "VOID", "FUNCTION", 
-			"RETURNS", "BOOL_TYPE", "INT_TYPE", "TRUE", "FALSE", "DOUBLE_TYPE", "MATRIX", 
-			"VECTOR", "BREAK", "POWER", "SQRT", "PREFIX_OP", "SECOND_ORDER_OP", "FIRST_ORDER_OP", 
+			"RETURNS", "BOOL_TYPE", "TRUE", "FALSE", "DOUBLE_TYPE", "MATRIX", "VECTOR", 
+			"BREAK", "POWER", "SQRT", "PREFIX_OP", "SECOND_ORDER_OP", "FIRST_ORDER_OP", 
 			"BOOL_OP", "ASSIGN_OP", "COMMA", "DOT", "NUMBER", "GET", "IMPORT", "FILE_TYPE", 
 			"SPACE", "FROM", "TO", "IDENTIFIER", "NAME", "PATH"
 		};
@@ -146,7 +147,7 @@ public class matrixoParser extends Parser {
 			setState(61);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RETURN) | (1L << FOR) | (1L << L_PAR) | (1L << IF) | (1L << L_BRAK) | (1L << WHILE) | (1L << COMMENT) | (1L << FUNCTION) | (1L << BOOL_TYPE) | (1L << INT_TYPE) | (1L << TRUE) | (1L << FALSE) | (1L << DOUBLE_TYPE) | (1L << MATRIX) | (1L << VECTOR) | (1L << BREAK) | (1L << SQRT) | (1L << PREFIX_OP) | (1L << NUMBER) | (1L << GET) | (1L << IMPORT) | (1L << IDENTIFIER))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RETURN) | (1L << FOR) | (1L << L_PAR) | (1L << IF) | (1L << L_BRAK) | (1L << WHILE) | (1L << COMMENT) | (1L << FUNCTION) | (1L << BOOL_TYPE) | (1L << TRUE) | (1L << FALSE) | (1L << DOUBLE_TYPE) | (1L << MATRIX) | (1L << VECTOR) | (1L << BREAK) | (1L << SQRT) | (1L << PREFIX_OP) | (1L << NUMBER) | (1L << GET) | (1L << IMPORT) | (1L << IDENTIFIER))) != 0)) {
 				{
 				{
 				setState(58);
@@ -213,7 +214,6 @@ public class matrixoParser extends Parser {
 			case RETURN:
 			case L_PAR:
 			case BOOL_TYPE:
-			case INT_TYPE:
 			case TRUE:
 			case FALSE:
 			case DOUBLE_TYPE:
@@ -773,7 +773,7 @@ public class matrixoParser extends Parser {
 			setState(126);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RETURN) | (1L << FOR) | (1L << L_PAR) | (1L << IF) | (1L << L_BRAK) | (1L << WHILE) | (1L << COMMENT) | (1L << FUNCTION) | (1L << BOOL_TYPE) | (1L << INT_TYPE) | (1L << TRUE) | (1L << FALSE) | (1L << DOUBLE_TYPE) | (1L << MATRIX) | (1L << VECTOR) | (1L << BREAK) | (1L << SQRT) | (1L << PREFIX_OP) | (1L << NUMBER) | (1L << GET) | (1L << IMPORT) | (1L << IDENTIFIER))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << RETURN) | (1L << FOR) | (1L << L_PAR) | (1L << IF) | (1L << L_BRAK) | (1L << WHILE) | (1L << COMMENT) | (1L << FUNCTION) | (1L << BOOL_TYPE) | (1L << TRUE) | (1L << FALSE) | (1L << DOUBLE_TYPE) | (1L << MATRIX) | (1L << VECTOR) | (1L << BREAK) | (1L << SQRT) | (1L << PREFIX_OP) | (1L << NUMBER) | (1L << GET) | (1L << IMPORT) | (1L << IDENTIFIER))) != 0)) {
 				{
 				{
 				setState(123);
@@ -823,7 +823,6 @@ public class matrixoParser extends Parser {
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case BOOL_TYPE:
-			case INT_TYPE:
 			case DOUBLE_TYPE:
 			case MATRIX:
 			case VECTOR:
@@ -990,7 +989,7 @@ public class matrixoParser extends Parser {
 			setState(156);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOL_TYPE) | (1L << INT_TYPE) | (1L << DOUBLE_TYPE) | (1L << MATRIX) | (1L << VECTOR))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOL_TYPE) | (1L << DOUBLE_TYPE) | (1L << MATRIX) | (1L << VECTOR))) != 0)) {
 				{
 				setState(148);
 				parameter();
@@ -1160,7 +1159,6 @@ public class matrixoParser extends Parser {
 	public static class TypeContext extends ParserRuleContext {
 		public TerminalNode DOUBLE_TYPE() { return getToken(matrixoParser.DOUBLE_TYPE, 0); }
 		public TerminalNode BOOL_TYPE() { return getToken(matrixoParser.BOOL_TYPE, 0); }
-		public TerminalNode INT_TYPE() { return getToken(matrixoParser.INT_TYPE, 0); }
 		public TerminalNode MATRIX() { return getToken(matrixoParser.MATRIX, 0); }
 		public TerminalNode VECTOR() { return getToken(matrixoParser.VECTOR, 0); }
 		public TypeContext(ParserRuleContext parent, int invokingState) {
@@ -1183,7 +1181,7 @@ public class matrixoParser extends Parser {
 			{
 			setState(169);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOL_TYPE) | (1L << INT_TYPE) | (1L << DOUBLE_TYPE) | (1L << MATRIX) | (1L << VECTOR))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << BOOL_TYPE) | (1L << DOUBLE_TYPE) | (1L << MATRIX) | (1L << VECTOR))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -2039,7 +2037,7 @@ public class matrixoParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3-\u0102\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3,\u0102\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -2059,68 +2057,68 @@ public class matrixoParser extends Parser {
 		"\13\31\3\31\3\31\3\32\3\32\3\32\3\32\3\32\3\33\3\33\3\33\7\33\u00ed\n"+
 		"\33\f\33\16\33\u00f0\13\33\5\33\u00f2\n\33\3\34\3\34\3\34\3\34\3\34\3"+
 		"\35\3\35\3\35\3\35\3\36\5\36\u00fe\n\36\3\36\3\36\3\36\2\3(\37\2\4\6\b"+
-		"\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:\2\5\4\2\23\24\27"+
-		"\31\4\2\6\6\"\"\3\2\30\31\2\u0109\2?\3\2\2\2\4H\3\2\2\2\6N\3\2\2\2\bU"+
-		"\3\2\2\2\nW\3\2\2\2\f]\3\2\2\2\16_\3\2\2\2\20i\3\2\2\2\22q\3\2\2\2\24"+
-		"v\3\2\2\2\26|\3\2\2\2\30\u0087\3\2\2\2\32\u0089\3\2\2\2\34\u008d\3\2\2"+
-		"\2\36\u009e\3\2\2\2 \u00a0\3\2\2\2\"\u00a3\3\2\2\2$\u00a8\3\2\2\2&\u00ab"+
+		"\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:\2\5\4\2\23\23\26"+
+		"\30\4\2\6\6!!\3\2\27\30\2\u0109\2?\3\2\2\2\4H\3\2\2\2\6N\3\2\2\2\bU\3"+
+		"\2\2\2\nW\3\2\2\2\f]\3\2\2\2\16_\3\2\2\2\20i\3\2\2\2\22q\3\2\2\2\24v\3"+
+		"\2\2\2\26|\3\2\2\2\30\u0087\3\2\2\2\32\u0089\3\2\2\2\34\u008d\3\2\2\2"+
+		"\36\u009e\3\2\2\2 \u00a0\3\2\2\2\"\u00a3\3\2\2\2$\u00a8\3\2\2\2&\u00ab"+
 		"\3\2\2\2(\u00b6\3\2\2\2*\u00cf\3\2\2\2,\u00d1\3\2\2\2.\u00d5\3\2\2\2\60"+
 		"\u00df\3\2\2\2\62\u00e4\3\2\2\2\64\u00f1\3\2\2\2\66\u00f3\3\2\2\28\u00f8"+
 		"\3\2\2\2:\u00fd\3\2\2\2<>\5\4\3\2=<\3\2\2\2>A\3\2\2\2?=\3\2\2\2?@\3\2"+
 		"\2\2@B\3\2\2\2A?\3\2\2\2BC\7\2\2\3C\3\3\2\2\2DI\5\6\4\2EF\5\b\5\2FG\7"+
 		"\7\2\2GI\3\2\2\2HD\3\2\2\2HE\3\2\2\2I\5\3\2\2\2JO\5\f\7\2KO\5\26\f\2L"+
 		"O\7\17\2\2MO\5\34\17\2NJ\3\2\2\2NK\3\2\2\2NL\3\2\2\2NM\3\2\2\2O\7\3\2"+
-		"\2\2PV\5\"\22\2QV\5\n\6\2RV\5\32\16\2SV\5(\25\2TV\7\32\2\2UP\3\2\2\2U"+
+		"\2\2PV\5\"\22\2QV\5\n\6\2RV\5\32\16\2SV\5(\25\2TV\7\31\2\2UP\3\2\2\2U"+
 		"Q\3\2\2\2UR\3\2\2\2US\3\2\2\2UT\3\2\2\2V\t\3\2\2\2WX\7\3\2\2XY\5(\25\2"+
 		"Y\13\3\2\2\2Z^\5\16\b\2[^\5\20\t\2\\^\5\24\13\2]Z\3\2\2\2][\3\2\2\2]\\"+
-		"\3\2\2\2^\r\3\2\2\2_`\7\4\2\2`a\7\5\2\2ab\7+\2\2bc\7)\2\2cd\5(\25\2de"+
-		"\7*\2\2ef\5(\25\2fg\7\6\2\2gh\5\4\3\2h\17\3\2\2\2ij\7\t\2\2jk\7\5\2\2"+
+		"\3\2\2\2^\r\3\2\2\2_`\7\4\2\2`a\7\5\2\2ab\7*\2\2bc\7(\2\2cd\5(\25\2de"+
+		"\7)\2\2ef\5(\25\2fg\7\6\2\2gh\5\4\3\2h\17\3\2\2\2ij\7\t\2\2jk\7\5\2\2"+
 		"kl\5(\25\2lm\7\6\2\2mo\5\4\3\2np\5\22\n\2on\3\2\2\2op\3\2\2\2p\21\3\2"+
 		"\2\2qt\7\b\2\2ru\5\20\t\2su\5\4\3\2tr\3\2\2\2ts\3\2\2\2u\23\3\2\2\2vw"+
 		"\7\16\2\2wx\7\5\2\2xy\5(\25\2yz\7\6\2\2z{\5\4\3\2{\25\3\2\2\2|\u0080\7"+
 		"\n\2\2}\177\5\4\3\2~}\3\2\2\2\177\u0082\3\2\2\2\u0080~\3\2\2\2\u0080\u0081"+
 		"\3\2\2\2\u0081\u0083\3\2\2\2\u0082\u0080\3\2\2\2\u0083\u0084\7\r\2\2\u0084"+
 		"\27\3\2\2\2\u0085\u0088\5&\24\2\u0086\u0088\7\20\2\2\u0087\u0085\3\2\2"+
-		"\2\u0087\u0086\3\2\2\2\u0088\31\3\2\2\2\u0089\u008a\7+\2\2\u008a\u008b"+
-		"\7!\2\2\u008b\u008c\5(\25\2\u008c\33\3\2\2\2\u008d\u008e\7\21\2\2\u008e"+
-		"\u008f\7+\2\2\u008f\u0090\7\5\2\2\u0090\u0091\5\36\20\2\u0091\u0092\7"+
+		"\2\u0087\u0086\3\2\2\2\u0088\31\3\2\2\2\u0089\u008a\7*\2\2\u008a\u008b"+
+		"\7 \2\2\u008b\u008c\5(\25\2\u008c\33\3\2\2\2\u008d\u008e\7\21\2\2\u008e"+
+		"\u008f\7*\2\2\u008f\u0090\7\5\2\2\u0090\u0091\5\36\20\2\u0091\u0092\7"+
 		"\6\2\2\u0092\u0093\7\22\2\2\u0093\u0094\5\30\r\2\u0094\u0095\5\26\f\2"+
-		"\u0095\35\3\2\2\2\u0096\u009b\5 \21\2\u0097\u0098\7\"\2\2\u0098\u009a"+
-		"\5 \21\2\u0099\u0097\3\2\2\2\u009a\u009d\3\2\2\2\u009b\u0099\3\2\2\2\u009b"+
+		"\u0095\35\3\2\2\2\u0096\u009b\5 \21\2\u0097\u0098\7!\2\2\u0098\u009a\5"+
+		" \21\2\u0099\u0097\3\2\2\2\u009a\u009d\3\2\2\2\u009b\u0099\3\2\2\2\u009b"+
 		"\u009c\3\2\2\2\u009c\u009f\3\2\2\2\u009d\u009b\3\2\2\2\u009e\u0096\3\2"+
 		"\2\2\u009e\u009f\3\2\2\2\u009f\37\3\2\2\2\u00a0\u00a1\5&\24\2\u00a1\u00a2"+
-		"\7+\2\2\u00a2!\3\2\2\2\u00a3\u00a4\5&\24\2\u00a4\u00a6\7+\2\2\u00a5\u00a7"+
+		"\7*\2\2\u00a2!\3\2\2\2\u00a3\u00a4\5&\24\2\u00a4\u00a6\7*\2\2\u00a5\u00a7"+
 		"\5$\23\2\u00a6\u00a5\3\2\2\2\u00a6\u00a7\3\2\2\2\u00a7#\3\2\2\2\u00a8"+
-		"\u00a9\7!\2\2\u00a9\u00aa\5(\25\2\u00aa%\3\2\2\2\u00ab\u00ac\t\2\2\2\u00ac"+
-		"\'\3\2\2\2\u00ad\u00ae\b\25\1\2\u00ae\u00b7\5*\26\2\u00af\u00b0\7\35\2"+
-		"\2\u00b0\u00b7\5*\26\2\u00b1\u00b2\7\34\2\2\u00b2\u00b7\5*\26\2\u00b3"+
+		"\u00a9\7 \2\2\u00a9\u00aa\5(\25\2\u00aa%\3\2\2\2\u00ab\u00ac\t\2\2\2\u00ac"+
+		"\'\3\2\2\2\u00ad\u00ae\b\25\1\2\u00ae\u00b7\5*\26\2\u00af\u00b0\7\34\2"+
+		"\2\u00b0\u00b7\5*\26\2\u00b1\u00b2\7\33\2\2\u00b2\u00b7\5*\26\2\u00b3"+
 		"\u00b7\5.\30\2\u00b4\u00b7\5,\27\2\u00b5\u00b7\5\66\34\2\u00b6\u00ad\3"+
 		"\2\2\2\u00b6\u00af\3\2\2\2\u00b6\u00b1\3\2\2\2\u00b6\u00b3\3\2\2\2\u00b6"+
 		"\u00b4\3\2\2\2\u00b6\u00b5\3\2\2\2\u00b7\u00c6\3\2\2\2\u00b8\u00b9\f\t"+
-		"\2\2\u00b9\u00ba\7\33\2\2\u00ba\u00c5\5(\25\n\u00bb\u00bc\f\b\2\2\u00bc"+
-		"\u00bd\7\37\2\2\u00bd\u00c5\5(\25\t\u00be\u00bf\f\7\2\2\u00bf\u00c0\7"+
-		"\36\2\2\u00c0\u00c5\5(\25\b\u00c1\u00c2\f\6\2\2\u00c2\u00c3\7 \2\2\u00c3"+
+		"\2\2\u00b9\u00ba\7\32\2\2\u00ba\u00c5\5(\25\n\u00bb\u00bc\f\b\2\2\u00bc"+
+		"\u00bd\7\36\2\2\u00bd\u00c5\5(\25\t\u00be\u00bf\f\7\2\2\u00bf\u00c0\7"+
+		"\35\2\2\u00c0\u00c5\5(\25\b\u00c1\u00c2\f\6\2\2\u00c2\u00c3\7\37\2\2\u00c3"+
 		"\u00c5\5(\25\7\u00c4\u00b8\3\2\2\2\u00c4\u00bb\3\2\2\2\u00c4\u00be\3\2"+
 		"\2\2\u00c4\u00c1\3\2\2\2\u00c5\u00c8\3\2\2\2\u00c6\u00c4\3\2\2\2\u00c6"+
-		"\u00c7\3\2\2\2\u00c7)\3\2\2\2\u00c8\u00c6\3\2\2\2\u00c9\u00d0\7\25\2\2"+
-		"\u00ca\u00d0\7\26\2\2\u00cb\u00d0\7$\2\2\u00cc\u00d0\7+\2\2\u00cd\u00d0"+
+		"\u00c7\3\2\2\2\u00c7)\3\2\2\2\u00c8\u00c6\3\2\2\2\u00c9\u00d0\7\24\2\2"+
+		"\u00ca\u00d0\7\25\2\2\u00cb\u00d0\7#\2\2\u00cc\u00d0\7*\2\2\u00cd\u00d0"+
 		"\58\35\2\u00ce\u00d0\5\62\32\2\u00cf\u00c9\3\2\2\2\u00cf\u00ca\3\2\2\2"+
 		"\u00cf\u00cb\3\2\2\2\u00cf\u00cc\3\2\2\2\u00cf\u00cd\3\2\2\2\u00cf\u00ce"+
-		"\3\2\2\2\u00d0+\3\2\2\2\u00d1\u00d2\7%\2\2\u00d2\u00d3\7+\2\2\u00d3\u00d4"+
-		"\7+\2\2\u00d4-\3\2\2\2\u00d5\u00d9\7\5\2\2\u00d6\u00d8\5\60\31\2\u00d7"+
+		"\3\2\2\2\u00d0+\3\2\2\2\u00d1\u00d2\7$\2\2\u00d2\u00d3\7*\2\2\u00d3\u00d4"+
+		"\7*\2\2\u00d4-\3\2\2\2\u00d5\u00d9\7\5\2\2\u00d6\u00d8\5\60\31\2\u00d7"+
 		"\u00d6\3\2\2\2\u00d8\u00db\3\2\2\2\u00d9\u00d7\3\2\2\2\u00d9\u00da\3\2"+
-		"\2\2\u00da/\3\2\2\2\u00db\u00d9\3\2\2\2\u00dc\u00de\7$\2\2\u00dd\u00dc"+
+		"\2\2\u00da/\3\2\2\2\u00db\u00d9\3\2\2\2\u00dc\u00de\7#\2\2\u00dd\u00dc"+
 		"\3\2\2\2\u00de\u00e1\3\2\2\2\u00df\u00dd\3\2\2\2\u00df\u00e0\3\2\2\2\u00e0"+
 		"\u00e2\3\2\2\2\u00e1\u00df\3\2\2\2\u00e2\u00e3\t\3\2\2\u00e3\61\3\2\2"+
-		"\2\u00e4\u00e5\7+\2\2\u00e5\u00e6\7\5\2\2\u00e6\u00e7\5\64\33\2\u00e7"+
-		"\u00e8\7\6\2\2\u00e8\63\3\2\2\2\u00e9\u00ee\5(\25\2\u00ea\u00eb\7\"\2"+
-		"\2\u00eb\u00ed\5(\25\2\u00ec\u00ea\3\2\2\2\u00ed\u00f0\3\2\2\2\u00ee\u00ec"+
+		"\2\u00e4\u00e5\7*\2\2\u00e5\u00e6\7\5\2\2\u00e6\u00e7\5\64\33\2\u00e7"+
+		"\u00e8\7\6\2\2\u00e8\63\3\2\2\2\u00e9\u00ee\5(\25\2\u00ea\u00eb\7!\2\2"+
+		"\u00eb\u00ed\5(\25\2\u00ec\u00ea\3\2\2\2\u00ed\u00f0\3\2\2\2\u00ee\u00ec"+
 		"\3\2\2\2\u00ee\u00ef\3\2\2\2\u00ef\u00f2\3\2\2\2\u00f0\u00ee\3\2\2\2\u00f1"+
-		"\u00e9\3\2\2\2\u00f1\u00f2\3\2\2\2\u00f2\65\3\2\2\2\u00f3\u00f4\7&\2\2"+
-		"\u00f4\u00f5\t\4\2\2\u00f5\u00f6\7)\2\2\u00f6\u00f7\5:\36\2\u00f7\67\3"+
+		"\u00e9\3\2\2\2\u00f1\u00f2\3\2\2\2\u00f2\65\3\2\2\2\u00f3\u00f4\7%\2\2"+
+		"\u00f4\u00f5\t\4\2\2\u00f5\u00f6\7(\2\2\u00f6\u00f7\5:\36\2\u00f7\67\3"+
 		"\2\2\2\u00f8\u00f9\7\5\2\2\u00f9\u00fa\5(\25\2\u00fa\u00fb\7\6\2\2\u00fb"+
-		"9\3\2\2\2\u00fc\u00fe\7-\2\2\u00fd\u00fc\3\2\2\2\u00fd\u00fe\3\2\2\2\u00fe"+
-		"\u00ff\3\2\2\2\u00ff\u0100\7,\2\2\u0100;\3\2\2\2\27?HNU]ot\u0080\u0087"+
+		"9\3\2\2\2\u00fc\u00fe\7,\2\2\u00fd\u00fc\3\2\2\2\u00fd\u00fe\3\2\2\2\u00fe"+
+		"\u00ff\3\2\2\2\u00ff\u0100\7+\2\2\u0100;\3\2\2\2\27?HNU]ot\u0080\u0087"+
 		"\u009b\u009e\u00a6\u00b6\u00c4\u00c6\u00cf\u00d9\u00df\u00ee\u00f1\u00fd";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());

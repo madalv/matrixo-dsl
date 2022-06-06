@@ -8,7 +8,7 @@ import java.io.IOException;
 public class MatrixoMain {
     public static void main(String[] args) {
         try {
-            CharStream in = CharStreams.fromFileName(System.getProperty("user.dir") + "\\src\\tests\\test4.mo");
+            CharStream in = CharStreams.fromFileName(System.getProperty("user.dir") + "\\src\\tests\\test2.mo");
             matrixoInterpreter interpreter = new matrixoInterpreter();
             interpreter.interpret(in);
 

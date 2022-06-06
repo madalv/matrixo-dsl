@@ -50,7 +50,7 @@ variable_dec: type IDENTIFIER (variable_init)?;
 
 variable_init: ASSIGN_OP expression;
 
-type: DOUBLE_TYPE | BOOL_TYPE | INT_TYPE | MATRIX | VECTOR;
+type: DOUBLE_TYPE | BOOL_TYPE | MATRIX | VECTOR;
 
 // EXPRESSIONS
 
@@ -101,8 +101,7 @@ COMMENT: '//' ~[\r\n]* -> skip;
 VOID: 'void';
 FUNCTION: 'function' | 'fun';
 RETURNS: 'returns' | 'ret';
-BOOL_TYPE: 'bool';
-INT_TYPE: 'int';
+BOOL_TYPE: 'boolean';
 TRUE: 'true';
 FALSE: 'false';
 DOUBLE_TYPE: 'double';
@@ -127,5 +126,5 @@ FROM: 'from';
 TO: 'to';
 IDENTIFIER: [a-zA-Z_][0-9a-zA-Z_]*;
 NAME: [a-zA-Z0-9_]+ '.' ('csv' | 'xlsx');
-PATH: ([a-zA-Z0-9_]':\\')([a-zA-Z0-9_]+ '\\')* | '\\' ;
+PATH: ([a-zA-Z0-9_-]':\\')([a-zA-Z0-9_-]+ '\\')* | '\\' ;
 
