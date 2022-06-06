@@ -191,6 +191,35 @@ public class Matrix{
         return solution;
     }
 
+    static double multiplyMatricesCell(Matrix A, Matrix B, int row, int col) {
+        double cell = 0;
+        for (int i = 0; i < B.getValue().size(); i++) {
+            cell += A.getValue().get(row).get(i) * B.getValue().get(i).get(col);
+        }
+        return cell;
+    }
+
+    public static double[][] MatrixMultiplication(Matrix A, Matrix B) {
+        int first_dim_A = A.getValue().size();
+        int second_dim_A = A.getValue().get(0).size();
+
+        int first_dim_B = B.getValue().size();
+        int second_dim_B = B.getValue().get(0).size();
+
+        double[][] result = new double[first_dim_A][second_dim_B];
+
+        if (second_dim_A != first_dim_B) {
+            System.out.println("ERROR");
+        } else {
+            for (int i = 0; i < first_dim_A; i++) {
+                for (int j = 0; j < second_dim_B; j++) {
+                    result[i][j] = multiplyMatricesCell(A, B, i, j);
+                }
+            }
+        }
+        return result;
+    }
+
     @Override
     public String toString() {
         return  value.toString();
