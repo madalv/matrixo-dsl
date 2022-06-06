@@ -1,6 +1,7 @@
 package uwu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class Matrix{
@@ -229,6 +230,43 @@ public class Matrix{
                     minor[i < row ? i : i - 1][j < column ? j : j - 1] = A.getValue().get(i).get(j);
         return minor;
     }
+
+    public static Double[][] rref(Matrix A) {
+//        double[][] matrix = (double[][]) A.getValue().toArray();
+        Double[][] matrix = A.getValue().stream().map(u -> u.toArray(new Double[0])).toArray(Double[][]::new);
+        Double[][] rref = new Double[matrix.length][];
+        for (int i = 0; i < matrix.length; i++)
+            rref[i] = Arrays.copyOf(matrix[i], matrix[i].length);
+
+        int r = 0;
+        for (int c = 0; c < rref[0].length && r < rref.length; c++) {
+            int j = r;
+            for (int i = r + 1; i < rref.length; i++)
+                if (Math.abs(rref[i][c]) > Math.abs(rref[j][c]))
+                    j = i;
+            if (Math.abs(rref[j][c]) < 0.00001)
+                continue;
+
+            Double[] temp = rref[j];
+            rref[j] = rref[r];
+            rref[r] = temp;
+
+            double s = 1.0 / rref[r][c];
+            for (j = 0; j < rref[0].length; j++)
+                rref[r][j] *= s;
+            for (int i = 0; i < rref.length; i++) {
+                if (i != r) {
+                    double t = rref[i][c];
+                    for (j = 0; j < rref[0].length; j++)
+                        rref[i][j] -= t * rref[r][j];
+                }
+            }
+            r++;
+        }
+
+        return rref;
+    }
+
 
     @Override
     public String toString() {
