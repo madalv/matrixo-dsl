@@ -3,6 +3,7 @@ package uwu;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class Matrix{
     private ArrayList<ArrayList<Double>> value;
@@ -267,10 +268,81 @@ public class Matrix{
         return rref;
     }
 
+    // Function to get adjoint of A[N][N] in adj[N][N].
+    static void adjoint(Matrix A, Matrix adj) {
+        int N = A.getValue().size();
 
-    @Override
-    public String toString() {
-        return  value.toString();
+        for (int i = 0; i < N; i++) {
+            ArrayList<Double> row = new ArrayList<>(Collections.nCopies(N, 0.0));
+            adj.add(row);
+        }
+
+        if (N == 1) {
+            adj.getValue().get(0).set(0, 1.0);
+            return;
+        }
+
+        int sign = 1;
+
+        Matrix temp = new Matrix();
+
+        for (int i = 0; i < N; i++) {
+            ArrayList<Double> row = new ArrayList<>(Collections.nCopies(N, 0.0));
+            temp.add(row);
+        }
+
+        for (int i = 0; i < N; i++)
+        {
+            for (int j = 0; j < N; j++)
+            {
+                // Get cofactor of A[i][j]
+                getCofactor(A, temp, i, j, N);
+
+                // sign of adj[j][i] positive if sum of row
+                // and column indexes is even.
+                sign = ((i + j) % 2 == 0)? 1: -1;
+
+                // Interchanging rows and columns to get the
+                // transpose of the cofactor matrix
+                adj.getValue().get(j).set(i, (sign)*(determinantOfMatrix(temp, N-1)));
+            }
+        }
+    }
+
+    public static Matrix inverse(Matrix A) {
+        int N = A.getValue().size();
+        // Find determinant of A[][]
+        double det = determinantOfMatrix(A, N);
+        if (det == 0)
+        {
+            System.out.print("Singular matrix, can't find its inverse");
+        }
+
+        // Find adjoint
+        Matrix adj = new Matrix();
+
+        for (int i = 0; i < N; i++) {
+            ArrayList<Double> row = new ArrayList<>(Collections.nCopies(N, 0.0));
+            adj.add(row);
+        }
+        adjoint(A, adj);
+
+        // Find Inverse using formula "inverse(A) = adj(A)/det(A)"
+        Matrix inverse = new Matrix();
+        for (int i = 0; i < N; i++) {
+            ArrayList<Double> row = new ArrayList<>(Collections.nCopies(N, 0.0));
+            inverse.add(row);
+        }
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+                inverse.getValue().get(i).set(j, adj.getValue().get(i).get(j) / (float)det);
+
+        return inverse;
+    }
+
+    @Override public String toString() {
+        return  value.stream().map(r -> r.stream().map(String::valueOf).collect(Collectors.joining(" ", "", ",\n")))
+                .collect(Collectors.joining("", "( \n", ")")).replaceFirst(",\n\\)", "\n)");
     }
 
 }
