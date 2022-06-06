@@ -24,7 +24,7 @@ public class matrixoBaseVisitor extends AbstractParseTreeVisitor<Value> implemen
 
 	public matrixoBaseVisitor() {
 		this.globalMemory = new Memory();
-		inbuiltFunctions = new ArrayList<>(List.of("print", "transpose"));
+		inbuiltFunctions = new ArrayList<>(List.of("print", "transpose", "gauss"));
 	}
 	/**
 	 * {@inheritDoc}

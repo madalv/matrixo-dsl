@@ -1,6 +1,7 @@
 package matrixoLang;
 
 import matrixoLang.Domain.*;
+import matrixoLang.Domain.Vector;
 import matrixoLang.Exceptions.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 
@@ -56,10 +57,13 @@ public class matrixoFunctionVisitor extends matrixoBaseVisitor {
         }
         // todo add inbuilt funcs
         else if (inbuiltFunctions.contains(fnName)) {
+            ArrayList<Value> args = visitArgument_list(ctx.argument_list()).getArgList();
             if (fnName.equalsIgnoreCase("print")) {
-                ArrayList<Value> args = visitArgument_list(ctx.argument_list()).getArgList();
                 args.forEach(System.out::println);
                 return null;
+            } else if (fnName.equalsIgnoreCase("gauss")) {
+                Vector v = Matrix.GaussElimination(args.get(0).getMatrix(), args.get(1).getVector());
+                return new Value(v, Type.VECTOR.value);
             }
             return null;
         }
