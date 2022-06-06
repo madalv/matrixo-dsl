@@ -121,7 +121,8 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
             case "*":
                 if (type1.equals(type2)) {
                     if (type1.equals(Type.MATRIX.value)) {
-                        //todo matrix * matrix
+                        Matrix result = Matrix.MatrixMultiplication(v1.getMatrix(), v2.getMatrix(), ctx.start.getLine());
+                        return new Value(result, Type.MATRIX.value);
                     }
                     if (type1.equals(Type.VECTOR.value)) {
                         //todo vector * vector (dot product)
@@ -279,10 +280,9 @@ public class matrixoExpressionVisitor extends matrixoBaseVisitor {
                 Method getMethod = var.getMatrix().getClass().getDeclaredMethod(fnName, Matrix.class);
                 Object m = getMethod.invoke(v, v);
                 return new Value(m, returnTypes.get(getMethod.getReturnType()));
-            } catch (NoSuchMethodException e) {
-                System.out.println(e.getMessage());
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (DeterminantUnevenMatrixException | IllegalAccessException | InvocationTargetException e) {
+                System.err.println(e.getCause());
+                System.exit(-1);
             }
         }
         return null;
